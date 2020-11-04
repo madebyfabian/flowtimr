@@ -6,6 +6,8 @@ export default class Graph {
     this.graphUrl = 'https://graph.microsoft.com/v1.0/'
     this.userRequest = { scopes: [ 'user.read', 'Calendars.ReadWrite', 'Calendars.ReadWrite.Shared' ] }
 
+    console.log(process.env.VUE_APP_GRAPH_CLIENT_ID)
+
     this.app = new Msal.UserAgentApplication({
       auth: { clientId: process.env.VUE_GRAPH_CLIENT_ID },
       cache: {
