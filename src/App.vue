@@ -8,6 +8,9 @@
   :root {
     color-scheme: dark;
 
+    --color-brand-primary: #92FB96;
+    --color-brand-secondary: #0C1D0C;
+
     --color-bg-primary: #000000;
     --color-bg-secondary: #141414;
     

@@ -25,8 +25,8 @@
     } 
 
     &[type=blue] {
-      color: hsl(227, 100, 72, 1);
-      background: hsl(227, 50, 13, 1)
+      color: var(--color-brand-primary);
+      background: var(--color-brand-secondary);
     } 
   }
 </style>
