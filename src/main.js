@@ -3,7 +3,13 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 
+
+// dayjs
+import '@/plugins/Dayjs'
+
+
 Vue.config.productionTip = false
+
 
 new Vue({
   router,

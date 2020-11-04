@@ -1,13 +1,16 @@
 {
-  "name": "vue-msal-test",
+  "name": "flowtimr.",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "start": "vue-cli-service serve",
     "build": "vue-cli-service build"
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "dayjs": "^1.9.4",
+    "dayjs-plugin-utc": "^0.1.2",
+    "msal": "^1.4.3",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0"

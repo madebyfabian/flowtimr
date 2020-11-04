@@ -1,32 +1,79 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
     <router-view/>
   </div>
 </template>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+  :root {
+    color-scheme: dark;
 
-#nav {
-  padding: 30px;
+    --color-bg-primary: #000000;
+    --color-bg-secondary: #141414;
+    
+    --color-content-primary: #E6E6E6;
+    --color-content-secondary: #757575;
+    --color-content-tertiary: #404040;
+  }
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+  @import url('https://rsms.me/inter/inter.css');
+  html { 
+    font-family: 'Inter var', sans-serif; 
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-    &.router-link-exact-active {
-      color: #42b983;
+  body {
+    margin: 0;
+  }
+
+  *, *::after, *::before {
+    box-sizing: border-box;
+  }
+
+  #app {
+    margin: 0 auto;
+    width: 100%;
+    background: var(--color-bg-primary);
+    color: var(--color-content-primary);
+  }
+
+  h1, h2, h3, h4, p {
+    margin: 0;
+  }
+
+  h1 {
+    margin: 0;
+    font-weight: 900;
+    font-size: 2.5rem;
+    line-height: 3rem;
+    letter-spacing: -1px;
+  }
+
+  h2 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.5rem;
+    letter-spacing: -1px;
+  }
+
+  p, .copy {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    letter-spacing: -0.25px;
+
+    &.isSmall {
+      font-size: 0.875rem;
+      line-height: 1rem;
+    }
+
+    &.isUppercase {
+      font-size: .75rem;
+      font-weight: 700;
+      line-height: 1rem;
+      letter-spacing: 0.75px;
+      text-transform: uppercase;
     }
   }
-}
 </style>
