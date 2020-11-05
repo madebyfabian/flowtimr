@@ -3,7 +3,7 @@ import { UserAgentApplication } from 'msal'
 
 export default class Graph {
   constructor() {
-    this.graphUrl = 'https://graph.microsoft.com/v1.0/'
+    this.graphUrl = 'https://graph.microsoft.com/v1.0'
     this.userRequest = { scopes: [ 'user.read', 'Calendars.ReadWrite', 'Calendars.ReadWrite.Shared' ] }
 
     this.app = new UserAgentApplication({
@@ -15,9 +15,8 @@ export default class Graph {
     })
   }
 
-
  
-  // Auth Stuff
+  // --- Auth Stuff ---
 
   isAuthenticated() {
     return !!this.app.getAccount()
@@ -48,8 +47,7 @@ export default class Graph {
   }
 
 
-
-  // API Stuff
+  // --- API Stuff ---
 
   /**
    * Get the Calendar Data
