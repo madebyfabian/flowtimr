@@ -2,7 +2,7 @@
   <article class="meeting">
     <div class="time">
       <p class="isSmall time-start">{{ formattedStartTime }}</p>
-      <p class="isSmall time-duration">30 min</p>
+      <p class="isSmall time-duration">{{ formattedDuration }}</p>
     </div>
 
     <div class="content">
