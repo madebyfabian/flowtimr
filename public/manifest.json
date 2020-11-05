@@ -4,6 +4,9 @@
 	"scope": "/",
 	"display": "standalone",
 	"lang": "de-DE",
+	"permissions": {
+    "desktop-notification": {}
+	},
 	"icons": [
 		{
 			"src": "/img/icon-192x192.png",
