@@ -29,7 +29,7 @@
         <div v-if="allUpcomingEvents.length !== 0" class="list">
           <h1>Was steht <br>noch an?</h1>
           <section v-for="(event, key) of allUpcomingEvents" :key="key">
-            <CardSeperator v-if="key === 0">{{ `Als nächstes – in ${ getOffsetInMinutes(event.start._unixDateTime, currentDate) } min` }}</CardSeperator>
+            <CardSeperator v-if="key === 0">{{ 'Als nächstes – in ' + formatMinutes(getOffsetInMinutes(event.start._unixDateTime, currDate)) }}</CardSeperator>
             <CardSeperator v-if="key === 1">Sonstige heute</CardSeperator>
             <EventSingleCard :event="event" />
           </section>
