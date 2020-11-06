@@ -1,52 +1,60 @@
 <template>
-  <div id="app">
-    <div class="home" v-if="msal.isAuthenticated() && events">
-      <div class="main" :class="{ listOpened }">
-        <div class="hero" :class="{ hasEvent: currActiveEventData }">
-          <div v-if="currActiveEventData">
-            <Badge :type="`blue`">Jetzt</Badge>
-            <h1>{{ currActiveEventData.subject }}</h1>
-            <EventInfoBar :items="[ 
-              currActiveEventData._custom.remainingDuration,
-              currActiveEventData.location.displayName 
-            ]" />
-          </div>
+  <div id="app" v-focus-visible>
+    <div class="home" v-if="msal.isAuthenticated()">
+      <div v-if="events !== null">
+        <div class="main" :class="{ listOpened }">
+          <div class="hero" :class="{ hasEvent: currActiveEventData }">
+            <div v-if="currActiveEventData">
+              <Badge :type="`blue`">Jetzt</Badge>
+              <h1>{{ currActiveEventData.subject }}</h1>
+              <EventInfoBar :items="[ 
+                currActiveEventData._custom.remainingDuration.trim(),
+                currActiveEventData.location.displayName.trim() 
+              ]" />
+            </div>
           
-          <h1 v-else v-html="!nextEventData && !currActiveEventData ? 'Alles erledigt. <br><br>🎉' : 'Flowtime.'" />
-        </div>
-        
-        <div class="nextUp" v-if="nextEventData" :class="{ isClose: nextEventData._custom.isClose }">
-          <Badge 
-            class="nextUp-badge" 
-            :type="nextEventData._custom.isClose ? 'blue' : 'default'"
-            v-text="nextEventData._custom.offsetStr" 
-          />
-          <h2 class="nextUp-subject" v-text="nextEventData.subject" />
-          <EventInfoBar class="nextUp-info isSmall" :items="[ 
-            nextEventData._custom.startTimeStr, 
-            nextEventData._custom.durationStr, 
-            nextEventData.location.displayName 
-          ]" />
+            <h1 v-else>
+              <span v-if="nextEventData">
+                Flowtime.
+              </span>
+              <span v-else>
+                Alles erledigt
+                <br>für heute.
+                <br><br>
+                <span style="opacity: .5">🎉</span>
+              </span>
+            </h1>
+          </div>
+
+          <div v-if="events.length !== 0">
+            <div v-if="nextEventData" class="nextUp" :class="{ isClose: nextEventData._custom.isClose }">
+              <Badge 
+                class="nextUp-badge" 
+                :type="nextEventData._custom.isClose ? 'blue' : 'default'"
+                v-text="nextEventData._custom.offsetStr" 
+              />
+              <h2 class="nextUp-subject" v-text="nextEventData.subject" />
+              <EventInfoBar class="nextUp-info isSmall" :items="[ 
+                nextEventData._custom.startTimeStr.trim(), 
+                nextEventData._custom.durationStr.trim(), 
+                nextEventData.location.displayName.trim() 
+              ]" />
+            </div>
+
+            <div class="navbar">
+              <ButtonIconOnly @click="listOpened = !listOpened" />
+            </div>
+          </div>
         </div>
 
-        <div class="navbar">
-          <ButtonIconOnly @click="listOpened = !listOpened" />
+        <div v-if="events.length !== 0" class="list">
+          <h1>Was steht <br>noch an?</h1>
+          <EventSingleCard :event="event" v-for="(event, key) of events" :key="key" />
         </div>
-      </div>
-
-      <div class="list" style="line-height: 150px">
-        <h1>Was steht <br>heute an?</h1>
-        <MeetingCard :event="event" v-for="(event, key) of events" :key="key" />
       </div>
     </div>
 
-    <div v-else style="height: 100vh; display: flex; align-items: center; justify-content: center">
-      <div>
-        <h1>flowtimr.</h1>
-        <br>
-        <button v-if="!msal.isAuthenticated()" style="margin: 0 auto; display: table;" @click="msal.login()">Login</button>
-      </div>
-    </div>
+    <Signin v-else @signin-button-click="msal.login()" /> 
   </div>
 </template>
 
@@ -58,7 +66,8 @@
   import Badge from '@/components/Badge'
   import ButtonIconOnly from '@/components/ButtonIconOnly'
   import EventInfoBar from '@/components/EventInfoBar'
-  import MeetingCard from '@/components/MeetingCard'
+  import EventSingleCard from '@/components/EventSingleCard'
+  import Signin from '@/components/Signin'
 
   import formatMinutes from '@/utils/formatMinutes'
 
@@ -66,9 +75,10 @@
   export default {
     name: 'Home',
 
-    components: { Badge, ButtonIconOnly, EventInfoBar, MeetingCard },
+    components: { Badge, ButtonIconOnly, EventInfoBar, EventSingleCard, Signin },
 
     data: () => ({
+      // appLoaded: false,
       events: null,
       listOpened: false,
       currDate: null,
@@ -139,6 +149,10 @@
     },
 
     async mounted() {
+      // console.log(this.msal.isAuthenticated())
+
+      // setTimeout(() => this.appLoaded = true, 2000)
+
       // Start the current date/time update interval
       this.updateCurrDate()
 
@@ -186,6 +200,7 @@
       // console.log(JSON.parse(JSON.stringify(events)))
 
       this.events = events
+      // this.events = []
     }
   }
 </script>
@@ -203,7 +218,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
+    width: 100%;
     background-color: var(--color-bg-primary);
     transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
     transition-duration: 600ms;
@@ -254,6 +269,7 @@
 
     .nextUp {
       text-align: center;
+      margin: 0 1rem;
       
       &-badge {
         margin: 0 auto .75rem;
@@ -295,7 +311,7 @@
   .list {
     text-align: center;
     min-height: 110vh;
-    padding: calc(var(--height-navbar) + 5rem) 0 2.5rem;
+    padding: calc(var(--height-navbar) + 5rem) 0 1rem;
 
     h1 {
       margin-bottom: 2rem;

@@ -3,6 +3,11 @@ import App from './App.vue'
 import './registerServiceWorker'
 
 
+// FocusVisible
+import FocusVisible from 'vue-focus-visible'
+Vue.use(FocusVisible)
+
+
 // dayjs
 import '@/plugins/Dayjs'
 

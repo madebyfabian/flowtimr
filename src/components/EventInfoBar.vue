@@ -1,7 +1,7 @@
 <template>
   <p>
     <span v-for="(item, key) of items" :key="key">
-      {{ key && item ? '–' : null }} {{ item || null }}
+      {{ item || null }} {{ item && key + 1 !== items.length ? '–' : null }}
     </span>
   </p>
 </template>
@@ -13,3 +13,13 @@
     }
   }
 </script>
+
+<style lang="scss" scoped>
+  p {
+    word-break: break-word;
+
+    span {
+      white-space: nowrap;
+    }
+  }
+</style>
