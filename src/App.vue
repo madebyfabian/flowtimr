@@ -27,19 +27,7 @@
           </div>
 
           <div v-if="events.length !== 0">
-            <div v-if="nextEventData" class="nextUp" :class="{ isClose: nextEventData._custom.isClose }">
-              <Badge 
-                class="nextUp-badge" 
-                :type="nextEventData._custom.isClose ? 'blue' : 'default'"
-                v-text="nextEventData._custom.offsetStr" 
-              />
-              <h2 class="nextUp-subject" v-text="nextEventData.subject" />
-              <EventInfoBar class="nextUp-info isSmall" :items="[ 
-                nextEventData._custom.startTimeStr.trim(), 
-                nextEventData._custom.durationStr.trim(), 
-                nextEventData.location.displayName.trim() 
-              ]" />
-            </div>
+            <EventNextUp v-if="nextEventData" :event="nextEventData" />
 
             <div class="navbar">
               <ButtonIconOnly @click="listOpened = !listOpened" />
@@ -62,23 +50,22 @@
   import '@/scss/main.scss'
 
   import GraphService from '@/services/Graph'
+  import formatMinutes from '@/utils/formatMinutes'
 
   import Badge from '@/components/Badge'
   import ButtonIconOnly from '@/components/ButtonIconOnly'
   import EventInfoBar from '@/components/EventInfoBar'
   import EventSingleCard from '@/components/EventSingleCard'
+  import EventNextUp from '@/components/EventNextUp'
   import Signin from '@/components/Signin'
-
-  import formatMinutes from '@/utils/formatMinutes'
 
 
   export default {
     name: 'Home',
 
-    components: { Badge, ButtonIconOnly, EventInfoBar, EventSingleCard, Signin },
+    components: { Badge, ButtonIconOnly, EventInfoBar, EventSingleCard, EventNextUp, Signin },
 
     data: () => ({
-      // appLoaded: false,
       events: null,
       listOpened: false,
       currDate: null,
@@ -138,9 +125,16 @@
         let self = this
         this.currDate = this.$date()
 
+        // Remove events that ended in the past (are over)
+        if (this.events && this.events.length !== 0)
+          for (let i = 0; i < this.events.length; i++) {
+            if (this.$date().isAfter(this.events[i].end._unixDateTime))
+              this.events.splice(i, 1)
+          }
+
         setTimeout(() => { // Update every 60 seconds.
           self.updateCurrDate()
-        }, 1000 * 60 )
+        }, 1000 * 60)
       },
 
       getOffsetInMinutes( date1, date2 ) {
@@ -149,10 +143,6 @@
     },
 
     async mounted() {
-      // console.log(this.msal.isAuthenticated())
-
-      // setTimeout(() => this.appLoaded = true, 2000)
-
       // Start the current date/time update interval
       this.updateCurrDate()
 
@@ -200,7 +190,6 @@
       // console.log(JSON.parse(JSON.stringify(events)))
 
       this.events = events
-      // this.events = []
     }
   }
 </script>
@@ -262,34 +251,6 @@
         }
         
         p {
-          color: var(--color-content-secondary);
-        }
-      }
-    }
-
-    .nextUp {
-      text-align: center;
-      margin: 0 1rem;
-      
-      &-badge {
-        margin: 0 auto .75rem;
-      }
-
-      &-subject {
-        margin-bottom: .5rem;
-        color: var(--color-content-secondary);
-      }
-
-      &-info {
-        color: var(--color-content-tertiary)
-      }
-
-      &.isClose {
-        .nextUp-subject {
-          color: var(--color-content-primary);
-        }
-
-        .nextUp-info {
           color: var(--color-content-secondary);
         }
       }

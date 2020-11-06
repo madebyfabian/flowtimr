@@ -46,9 +46,8 @@
     text-align: left;
 
     .time {
-      margin-top: 22px;
+      align-self: center;
       
-
       &-start {
         color: var(--color-content-secondary);
         margin-bottom: .25rem;
