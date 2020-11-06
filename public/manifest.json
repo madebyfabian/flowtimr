@@ -1,11 +1,9 @@
 {
-	"theme_color": "#000000",
-	"background_color": "#000000",
-	"display": "standalone",
-	"scope": "/",
-	"start_url": "/",
-	"app_name": "flowtimr",
 	"short_name": "flowtimr",
+	"start_url": "/",
+	"scope": "/",
+	"display": "standalone",
+	"lang": "de-DE",
 	"icons": [
 		{
 			"src": "/img/icon-192x192.png",
