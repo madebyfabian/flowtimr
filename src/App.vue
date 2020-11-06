@@ -13,17 +13,8 @@
               ]" />
             </div>
           
-            <h1 v-else>
-              <span v-if="nextEventData">
-                Flowtime.
-              </span>
-              <span v-else>
-                Alles erledigt
-                <br>für heute.
-                <br><br>
-                <span style="opacity: .5">🎉</span>
-              </span>
-            </h1>
+            <h1 v-else-if="nextEventData">Flowtime.</h1>
+            <h1 v-else>Alles erledigt<br>für heute.<br><br><span style="opacity: .5">🎉</span></h1>
           </div>
 
           <div v-if="events.length !== 0">
@@ -50,6 +41,7 @@
   import '@/scss/main.scss'
 
   import GraphService from '@/services/Graph'
+  import PushNotification from '@/services/PushNotification'
   import formatMinutes from '@/utils/formatMinutes'
 
   import Badge from '@/components/Badge'
@@ -65,28 +57,29 @@
 
     components: { Badge, ButtonIconOnly, EventInfoBar, EventSingleCard, EventNextUp, Signin },
 
-    data: () => ({
+    data: function() { return {
       events: null,
       listOpened: false,
-      currDate: null,
+      currDate: this.$date(),
       msal: new GraphService()
-    }),
+    }},
     
     computed: {
       nextEventData() {
-        let event = this.events.find(event => {
-          return this.currDate.isBefore(this.$date(event.start._unixDateTime))
-        })
-
+        let event = this.events.find(event => this.currDate.isBefore(this.$date(event.start._unixDateTime)))
         if (!event)
           return null
 
-        let offsetMin = this.$date(event.start._unixDateTime).diff(this.$date(), 'minute'),
+        let offsetMin = this.getOffsetInMinutes(event.start._unixDateTime, this.currDate),
             isClose = offsetMin <= 15
+
+        // Send push notification when event is 1 minute away.
+        if (offsetMin === 1)
+          new PushNotification(event.subject.trim())
 
         let offsetStr = 'In '
         if (this.currActiveEventData) {
-          let currAndNextEventOffsetMin = this.$date(this.currActiveEventData.end._unixDateTime).diff(event.start._unixDateTime, 'minute') 
+          let currAndNextEventOffsetMin = this.getOffsetInMinutes(this.currActiveEventData.end._unixDateTime, event.start._unixDateTime)
           if (currAndNextEventOffsetMin <= 15)
             offsetStr = 'Danach – in '
           else if (currAndNextEventOffsetMin <= 5)
@@ -99,7 +92,7 @@
           isClose,
           offsetStr: offsetStr + this.formatMinutes(offsetMin),
           startTimeStr: this.$date(event.start._unixDateTime).format('HH:mm'),
-          durationStr: this.formatMinutes(this.$date(event.end._unixDateTime).diff(event.start._unixDateTime, 'minute'), 'short')
+          durationStr: this.formatMinutes(this.getOffsetInMinutes(event.end._unixDateTime, event.start._unixDateTime), 'short')
         }}
       },
 
@@ -113,7 +106,7 @@
           return null
 
         return { ...event, _custom: {
-          remainingDuration: 'Noch ' + this.formatMinutes(this.$date(event.end._unixDateTime).diff(this.currDate, 'minutes'))
+          remainingDuration: 'Noch ' + this.formatMinutes(this.getOffsetInMinutes(event.end._unixDateTime, this.currDate))
         }}
       }
     },
@@ -121,42 +114,56 @@
     methods: {
       formatMinutes,
 
+      listScrollAnimation() {
+        let oldScrollPos = window.scrollY
+
+        document.body.onscroll = e => {
+          if (!this.events || this.events.length === 0)
+            return
+
+          let dirIsDown = window.scrollY > oldScrollPos
+          if (window.scrollY > 20 && dirIsDown)
+            this.listOpened = true
+          else if (window.scrollY <= 20 && !dirIsDown) 
+            this.listOpened = false
+          
+          oldScrollPos = window.scrollY
+        }
+      },
+
       updateCurrDate() {
-        let self = this
         this.currDate = this.$date()
 
-        // Remove events that ended in the past (are over)
-        if (this.events && this.events.length !== 0)
-          for (let i = 0; i < this.events.length; i++) {
-            if (this.$date().isAfter(this.events[i].end._unixDateTime))
-              this.events.splice(i, 1)
-          }
+        if (!this.events || this.events.length === 0)
+          return
 
-        setTimeout(() => { // Update every 60 seconds.
-          self.updateCurrDate()
-        }, 1000 * 60)
+        // Remove events that ended in the past (are over)
+        for (let i = 0; i < this.events.length; i++) {
+          if (this.$date().isAfter(this.events[i].end._unixDateTime))
+            this.events.splice(i, 1)
+        }
       },
 
       getOffsetInMinutes( date1, date2 ) {
-        return this.$date(date1).diff(this.$date(date2), 'minute')
+        return this.$date(date1).diff(this.$date(date2), 'minute') + 1
       } 
     },
 
     async mounted() {
-      // Start the current date/time update interval
-      this.updateCurrDate()
+      // setTimeout(async () => {
+      //   await new PushNotification('Visual Design Daily')
+      // }, 3000)
+
+      // Start the "updateCurrDate" function exactly when new minute begins.
+      setTimeout(() => {
+        this.updateCurrDate()
+        setInterval(() => {
+          this.updateCurrDate()
+        }, 60 * 1000)
+      }, (60 - this.$date().second()) * 1000)
 
       // Handle automatically opening/closing list on scroll.
-      let oldScrollPos = window.scrollY
-      document.body.onscroll = e => {
-        let dirIsDown = window.scrollY > oldScrollPos
-        if (window.scrollY > 20 && dirIsDown)
-          this.listOpened = true
-        else if (window.scrollY <= 20 && !dirIsDown) 
-          this.listOpened = false
-        
-        oldScrollPos = window.scrollY
-      }
+      this.listScrollAnimation()
 
       // Init data
       const startTime = this.$date().hour(0).minute(0).second(0).format().split('+')[0],
