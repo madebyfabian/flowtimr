@@ -168,13 +168,7 @@
 
       // Remove all-day-events & events already passed by
       events = events.filter(event => {
-        if (event.isAllDay)
-          return false
-
-        if (this.$date().isAfter(this.$date(event.end.dateTime + 'Z')))
-          return false
-
-        return true
+        return !event.isAllDay && !this.$date().isAfter(this.$date(event.end.dateTime + 'Z'))
       })
 
       // Add unix timestamps
