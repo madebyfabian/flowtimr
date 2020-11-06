@@ -12,6 +12,14 @@
   --color-content-tertiary: #404040;
 }
 
+:focus {
+  outline: none!important;
+}
+
+[v-focus-visible=true] :focus {
+  box-shadow: 0 0 0 2px #0498FB!important;
+}
+
 @import url('https://rsms.me/inter/inter.css');
 html { 
   font-family: 'Inter var', sans-serif; 
@@ -21,6 +29,9 @@ html {
 
 body {
   margin: 0;
+  background: var(--color-bg-primary);
+  color: var(--color-content-primary); 
+  overflow-y: scroll;
 }
 
 *, *::after, *::before {
@@ -30,8 +41,7 @@ body {
 #app {
   margin: 0 auto;
   width: 100%;
-  background: var(--color-bg-primary);
-  color: var(--color-content-primary);
+  height: 100vh;
 }
 
 h1, h2, h3, h4, p {

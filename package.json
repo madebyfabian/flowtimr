@@ -11,7 +11,8 @@
     "dayjs": "^1.9.4",
     "msal": "^1.4.3",
     "register-service-worker": "^1.7.1",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-focus-visible": "^2.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.0",
