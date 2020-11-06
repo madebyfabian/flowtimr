@@ -6,7 +6,7 @@
           <div class="hero" :class="{ hasEvent: currActiveEventData }">
             <div v-if="currActiveEventData">
               <Badge :type="`blue`">Jetzt</Badge>
-              <h1>{{ currActiveEventData.subject }}</h1>
+              <h1 v-html="currActiveEventData.subject" />
               <EventInfoBar :items="[ 
                 currActiveEventData._custom.remainingDuration.trim(),
                 currActiveEventData.location.displayName.trim() 
@@ -17,7 +17,7 @@
             <h1 v-else>Alles erledigt<br>für heute.<br><br><span style="opacity: .5">🎉</span></h1>
           </div>
 
-          <div v-if="events.length !== 0">
+          <div v-if="allUpcomingEvents.length !== 0">
             <EventNextUp v-if="nextEventData" :event="nextEventData" />
 
             <div class="navbar">
@@ -26,9 +26,13 @@
           </div>
         </div>
 
-        <div v-if="events.length !== 0" class="list">
+        <div v-if="allUpcomingEvents.length !== 0" class="list">
           <h1>Was steht <br>noch an?</h1>
-          <EventSingleCard :event="event" v-for="(event, key) of events" :key="key" />
+          <section v-for="(event, key) of allUpcomingEvents" :key="key">
+            <CardSeperator v-if="key === 0">{{ `Als nächstes – in ${ getOffsetInMinutes(event.start._unixDateTime, currentDate) } min` }}</CardSeperator>
+            <CardSeperator v-if="key === 1">Sonstige heute</CardSeperator>
+            <EventSingleCard :event="event" />
+          </section>
         </div>
       </div>
     </div>
@@ -49,13 +53,14 @@
   import EventInfoBar from '@/components/EventInfoBar'
   import EventSingleCard from '@/components/EventSingleCard'
   import EventNextUp from '@/components/EventNextUp'
+  import CardSeperator from '@/components/CardSeperator'
   import Signin from '@/components/Signin'
 
 
   export default {
     name: 'Home',
 
-    components: { Badge, ButtonIconOnly, EventInfoBar, EventSingleCard, EventNextUp, Signin },
+    components: { Badge, ButtonIconOnly, EventInfoBar, EventSingleCard, EventNextUp, CardSeperator, Signin },
 
     data: function() { return {
       events: null,
@@ -75,7 +80,7 @@
 
         // Send push notification when event is 1 minute away.
         if (offsetMin === 1)
-          new PushNotification(event.subject.trim())
+          new PushNotification(event.subject.replace('<wbr>', ''))
 
         let offsetStr = 'In '
         if (this.currActiveEventData) {
@@ -108,6 +113,15 @@
         return { ...event, _custom: {
           remainingDuration: 'Noch ' + this.formatMinutes(this.getOffsetInMinutes(event.end._unixDateTime, this.currDate))
         }}
+      },
+
+      /**
+       * Get all upcoming events that haven't started yet 
+       */
+      allUpcomingEvents() {
+        if (!this.events)
+          return null
+        return this.events.filter(event => this.$date(event.start._unixDateTime).isAfter(this.currDate))
       }
     },
 
@@ -181,6 +195,7 @@
       // Add unix timestamps
       events = events.map(event => ({ 
         ...event, 
+        subject: event.subject.trim().replace(/(?=\S)(\&|\/)(?=\S)/g, '$&<wbr>'), // add hidden word breaks for "foo/bar" and "foo&bar"
         start: { ...event.start, _unixDateTime: this.$date(event.start.dateTime + 'Z').valueOf() },
         end: { ...event.end, _unixDateTime: this.$date(event.end.dateTime + 'Z').valueOf() }
       }))

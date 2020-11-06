@@ -6,7 +6,7 @@
     </div>
 
     <div class="content">
-      <h2 class="content-title">{{ event.subject }}</h2>
+      <h2 class="content-title" v-html="event.subject" />
       <p class="content-info isSmall" v-if="event.location.displayName">{{ event.location.displayName }}</p>
     </div>
   </article>

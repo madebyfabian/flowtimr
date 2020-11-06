@@ -5,7 +5,7 @@
       :type="event._custom.isClose ? 'blue' : 'default'"
       v-text="event._custom.offsetStr" 
     />
-    <h2 class="eventNextUp-subject" v-text="event.subject" />
+    <h2 class="eventNextUp-subject" v-html="event.subject" />
     <EventInfoBar class="eventNextUp-info isSmall" :items="[ 
       event._custom.startTimeStr.trim(), 
       event._custom.durationStr.trim(), 
