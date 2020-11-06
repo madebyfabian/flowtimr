@@ -1,4 +1,4 @@
-import * as Msal from 'msal'
+import { UserAgentApplication } from 'msal'
 
 
 export default class Graph {
@@ -6,7 +6,7 @@ export default class Graph {
     this.graphUrl = 'https://graph.microsoft.com/v1.0/'
     this.userRequest = { scopes: [ 'user.read', 'Calendars.ReadWrite', 'Calendars.ReadWrite.Shared' ] }
 
-    this.app = new Msal.UserAgentApplication({
+    this.app = new UserAgentApplication({
       auth: { clientId: process.env.VUE_APP_GRAPH_CLIENT_ID },
       cache: {
         cacheLocation: 'localStorage',
