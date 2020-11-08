@@ -1,6 +1,6 @@
 <template>
   <div id="app" v-focus-visible>
-    <div class="home" v-if="msal.isAuthenticated()">
+    <div class="home" v-if="APIService.isAuthenticated()">
       <div v-if="events !== null">
         <div class="main" :class="{ listOpened }">
           <div class="hero" :class="{ hasEvent: currActiveEventData }">
@@ -28,48 +28,49 @@
 
         <div v-if="allUpcomingEvents.length !== 0" class="list">
           <h1>Was steht <br>noch an?</h1>
-          <section v-for="(event, key) of allUpcomingEvents" :key="key">
-            <CardSeperator v-if="key === 0">{{ 'Als nächstes – in ' + formatMinutes(getOffsetInMinutes(event.start._unixDateTime, currDate)) }}</CardSeperator>
-            <CardSeperator v-if="key === 1">Sonstige heute</CardSeperator>
-            <EventSingleCard :event="event" />
-          </section>
+          <EventSingleCard 
+            v-for="event of allUpcomingEvents" 
+            :key="event.id"
+            :event="event" 
+          />
         </div>
       </div>
     </div>
 
-    <Signin v-else @signin-button-click="msal.login()" /> 
+    <Signin v-else @signin-button-click="APIService.login()" /> 
   </div>
 </template>
 
 <script>
   import '@/scss/main.scss'
 
-  import GraphService from '@/services/Graph'
   import PushNotification from '@/services/PushNotification'
   import formatMinutes from '@/utils/formatMinutes'
+
+  import { store, mutations } from '@/store'
 
   import Badge from '@/components/Badge'
   import ButtonIconOnly from '@/components/ButtonIconOnly'
   import EventInfoBar from '@/components/EventInfoBar'
   import EventSingleCard from '@/components/EventSingleCard'
   import EventNextUp from '@/components/EventNextUp'
-  import CardSeperator from '@/components/CardSeperator'
   import Signin from '@/components/Signin'
 
 
   export default {
     name: 'Home',
 
-    components: { Badge, ButtonIconOnly, EventInfoBar, EventSingleCard, EventNextUp, CardSeperator, Signin },
+    components: { Badge, ButtonIconOnly, EventInfoBar, EventSingleCard, EventNextUp, Signin },
 
     data: function() { return {
-      events: null,
       listOpened: false,
-      currDate: this.$date(),
-      msal: new GraphService()
+      currDate: this.$date()
     }},
     
     computed: {
+      APIService: () => store.APIService,
+      events: () => store.events,
+
       nextEventData() {
         let event = this.events.find(event => this.currDate.isBefore(this.$date(event.start._unixDateTime)))
         if (!event)
@@ -127,6 +128,7 @@
 
     methods: {
       formatMinutes,
+      fetchAndUpdateEvents: mutations.fetchAndUpdateEvents,
 
       listScrollAnimation() {
         let oldScrollPos = window.scrollY
@@ -164,9 +166,8 @@
     },
 
     async mounted() {
-      // setTimeout(async () => {
-      //   await new PushNotification('Visual Design Daily')
-      // }, 3000)
+      // Fetch all events
+      this.fetchAndUpdateEvents()
 
       // Start the "updateCurrDate" function exactly when new minute begins.
       setTimeout(() => {
@@ -178,34 +179,6 @@
 
       // Handle automatically opening/closing list on scroll.
       this.listScrollAnimation()
-
-      // Init data
-      const startTime = this.$date().hour(0).minute(0).second(0).format().split('+')[0],
-            endTime   = this.$date().hour(23).minute(59).second(59).format().split('+')[0]
-
-      let { value: events } = await this.msal.getCalendarData(startTime, endTime)
-      if (!events)
-        return
-
-      // Remove all-day-events & events already passed by
-      events = events.filter(event => {
-        return !event.isAllDay && !this.$date().isAfter(this.$date(event.end.dateTime + 'Z'))
-      })
-
-      // Add unix timestamps
-      events = events.map(event => ({ 
-        ...event, 
-        subject: event.subject.trim().replace(/(?=\S)(\&|\/)(?=\S)/g, '$&<wbr>'), // add hidden word breaks for "foo/bar" and "foo&bar"
-        start: { ...event.start, _unixDateTime: this.$date(event.start.dateTime + 'Z').valueOf() },
-        end: { ...event.end, _unixDateTime: this.$date(event.end.dateTime + 'Z').valueOf() }
-      }))
-        
-      // Sort events by date
-      events = events.sort(( a, b ) => a.start._unixDateTime - b.start._unixDateTime)
-
-      // console.log(JSON.parse(JSON.stringify(events)))
-
-      this.events = events
     }
   }
 </script>
@@ -228,6 +201,7 @@
     transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
     transition-duration: 600ms;
     transition-property: transform, background-color;
+    z-index: 200;
 
     &.listOpened {
       --height-navbar: 4.5rem;
