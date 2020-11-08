@@ -4,8 +4,11 @@
   --color-brand-primary: #92FB96;
   --color-brand-secondary: #0C1D0C;
 
+  --color-red-primary: #FB9292;
+
   --color-bg-primary: #000000;
   --color-bg-secondary: #141414;
+  --color-bg-special-hover: rgba(255, 255, 255, .08);
   
   --color-content-primary: #E6E6E6;
   --color-content-secondary: #757575;
@@ -21,7 +24,7 @@
 }
 
 @import url('https://rsms.me/inter/inter.css');
-html { 
+* { 
   font-family: 'Inter var', sans-serif; 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
