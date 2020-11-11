@@ -1,6 +1,6 @@
 <template>
   <ul class="EventInfoBar copy">
-    <li v-for="(item, key) of items.filter(Boolean)" :key="key">
+    <li v-for="(item, key) of filteredItems" :key="key">
       <a 
         v-if="valueIsLocationObj(item) && item._redirectTo" 
         :href="item._redirectTo"
@@ -14,8 +14,13 @@
         v-else
         v-text="valueIsLocationObj(item) ? item._text : item" />
 
-      <span class="EventInfoBar-seperator" v-if="key + 1 !== items.length" v-text="'–'" />
+      <span class="EventInfoBar-seperator" v-if="key + 1 !== filteredItems.length" v-text="'–'" />
     </li>
+
+    <pre style="display: none">
+      {{filteredItems}}
+      {{items.length}}
+    </pre>
   </ul>
 </template>
 
@@ -23,6 +28,17 @@
   export default {
     props: {
       items: { type: Array, required: true }
+    },
+
+    computed: {
+      filteredItems() {
+        return this.items.filter(item => {
+          if (this.valueIsLocationObj(item))
+            return !!item && item._text && item._text.length
+          else
+            return !!item
+        }) 
+      }
     },
     
     methods: {
@@ -55,38 +71,16 @@
       flex-shrink: 0;
       position: relative;
 
-      &::after, svg {
-        opacity: .5;
-      }
-
-      &::after {
-        content: '';
-        position: absolute;
-        width: calc(100% - var(--icon-size) - var(--icon-spacing));
-        display: block;
-        height: 1px;
-        bottom: 0;
-        left: 0;
-        background-color: currentColor;
-        border-radius: 1px;
-        transition: opacity 150ms ease;
-      }
-
       svg {
+        opacity: .5;
         height: var(--icon-size);
         width: var(--icon-size);
         margin-left: var(--icon-spacing);
         transition: transform 150ms ease;
       }
 
-      &:hover {
-        &::after {
-          opacity: .75;
-        }
-
-        svg {
-          transform: translate(.125rem, -.125rem);
-        }
+      &:hover svg {
+        transform: translate(.125rem, -.125rem);
       }
     }
   }

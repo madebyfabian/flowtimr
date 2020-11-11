@@ -2,7 +2,7 @@
   <div class="eventNextUp" :class="{ isClose: event._custom.isClose }">
     <Badge 
       class="eventNextUp-badge" 
-      :type="event._custom.isClose ? 'blue' : 'default'"
+      :type="event._custom.isClose ? 'active' : 'default'"
       v-text="event._custom.offsetStr" 
     />
     <h2 class="eventNextUp-subject" v-html="event.subject" />
@@ -28,15 +28,10 @@
 
 <style lang="scss" scoped>
   .eventNextUp {
-    text-align: center;
-    margin: 0 1rem;
-    
-    &-badge {
-      margin: 0 auto .75rem;
-    }
+    margin-right: 1.5rem;
 
     &-subject {
-      margin-bottom: .5rem;
+      margin: .75rem 0 .25rem;
       color: var(--color-content-secondary);
     }
 

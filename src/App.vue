@@ -5,7 +5,7 @@
         <section class="main" :class="{ listOpened }">
           <div class="hero" :class="{ hasEvent: currActiveEventData }">
             <div v-if="currActiveEventData">
-              <Badge :type="`blue`">Jetzt</Badge>
+              <Badge :type="`active`">Jetzt</Badge>
               <h1 v-html="currActiveEventData.subject" />
               <EventInfoBar :items="[ 
                 currActiveEventData._custom.remainingDuration.trim(),
@@ -17,12 +17,10 @@
             <h1 v-else>Alles erledigt<br>für heute.<br><br><span style="opacity: .5">🎉</span></h1>
           </div>
 
-          <div v-if="allUpcomingEvents.length !== 0">
+          <div class="eventNextUp-wrapper" v-if="allUpcomingEvents.length !== 0">
             <EventNextUp v-if="nextEventData" :event="nextEventData" />
 
-            <div class="navbar">
-              <ButtonIconOnly @click="openList" />
-            </div>
+            <ButtonIconOnly @click="openList" />
           </div>
         </section>
 
@@ -230,27 +228,21 @@
     .hero {
       display: flex;
       align-items: center;
-      justify-content: center;
       user-select: none;
+      margin-right: 1rem;
 
       .EventInfoBar {
-        display: flex;
         color: var(--color-content-secondary);
       }
 
       h1, p {
-        text-align: center;
         color: var(--color-content-tertiary);
       }
 
       &.hasEvent {
-        .badge {
-          margin: 0 auto;
-        }
-        
         h1 {
           color: var(--color-content-primary);
-          margin: .75rem 0;
+          margin: 1rem 0 .75rem;
         }
         
         p {
@@ -259,12 +251,16 @@
       }
     }
 
-    .navbar {
-      height: var(--height-navbar);
+    .eventNextUp-wrapper {
       display: flex;
-      padding: 1.5rem 0;
-      align-items: center;
-      justify-content: center;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+
+      button {
+        margin-right: 0;
+        margin-left: auto;
+      }
     }
   }
 
