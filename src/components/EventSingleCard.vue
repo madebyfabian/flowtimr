@@ -313,7 +313,8 @@
       }
 
       .EventInfoBar {
-        margin-top: .5rem;
+        margin-top: .25rem;
+        color: var(--color-content-secondary);
       }
     }
   }

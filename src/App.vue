@@ -235,6 +235,7 @@
 
       .EventInfoBar {
         display: flex;
+        color: var(--color-content-secondary);
       }
 
       h1, p {

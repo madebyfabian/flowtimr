@@ -45,10 +45,6 @@
       display: inline-block;
     }
 
-    a, span {
-      color: var(--color-content-secondary);
-    }
-
     span {
       white-space: nowrap;
     }
@@ -60,6 +56,10 @@
       flex-shrink: 0;
       position: relative;
 
+      &::after, svg {
+        opacity: .5;
+      }
+
       &::after {
         content: '';
         position: absolute;
@@ -68,26 +68,21 @@
         height: 1px;
         bottom: 0;
         left: 0;
-        background-color: var(--color-content-tertiary);
+        background-color: currentColor;
         border-radius: 1px;
-        transition: background-color 150ms ease;
-        // transform-origin: left center;
-        // transform: scale(1, 1);
+        transition: opacity 150ms ease;
       }
 
       svg {
         height: var(--icon-size);
         width: var(--icon-size);
-        color: var(--color-content-tertiary);
         margin-left: var(--icon-spacing);
         transition: transform 150ms ease;
       }
 
       &:hover {
         &::after {
-          // transform-origin: right center;
-          // transform: scale(0, 1);
-          background-color: var(--color-content-secondary);
+          opacity: .75;
         }
 
         svg {

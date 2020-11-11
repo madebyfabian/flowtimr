@@ -7,7 +7,6 @@
     />
     <h2 class="eventNextUp-subject" v-html="event.subject" />
     <EventInfoBar class="eventNextUp-info isSmall" :items="[ 
-      event._custom.startTimeStr.trim(), 
       event._custom.durationStr.trim(), 
       event.location
     ]" />
