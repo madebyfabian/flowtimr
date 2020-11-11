@@ -33,7 +33,7 @@
       <EventInfoBar class="isSmall" :items="[
         formattedStartTime,
         formattedDuration,
-        event.location.displayName
+        event.location
       ]" />
 
       <div class="buttons" :class="{ isHidden: updatingEventResponse || errorUpdatingEventResponse }">
@@ -193,6 +193,7 @@
   .modal {
     h2 {
       margin-right: 5rem;
+      color: var(--color-content-primary);
     }
 
     .EventInfoBar {
@@ -249,7 +250,7 @@
     &.notAnswered {
       color: var(--color-content-secondary);
 
-      .EventInfoBar {
+      .content .EventInfoBar {
         color: var(--color-content-tertiary)!important;
       }
     }
