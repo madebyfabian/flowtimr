@@ -21,7 +21,7 @@
             <EventNextUp v-if="nextEventData" :event="nextEventData" />
 
             <div class="navbar">
-              <ButtonIconOnly @click="listOpened = !listOpened" />
+              <ButtonIconOnly @click="openList" />
             </div>
           </div>
         </div>
@@ -34,6 +34,8 @@
             :event="event" 
           />
         </div>
+
+        <FixedTopBar :isShown="fixedTopBarShown" />
       </div>
     </div>
 
@@ -54,16 +56,18 @@
   import EventInfoBar from '@/components/EventInfoBar'
   import EventSingleCard from '@/components/EventSingleCard'
   import EventNextUp from '@/components/EventNextUp'
+  import FixedTopBar from '@/components/FixedTopBar'
   import Signin from '@/components/Signin'
 
 
   export default {
     name: 'Home',
 
-    components: { Badge, ButtonIconOnly, EventInfoBar, EventSingleCard, EventNextUp, Signin },
+    components: { Badge, ButtonIconOnly, EventInfoBar, EventSingleCard, EventNextUp, FixedTopBar, Signin },
 
     data: function() { return {
       listOpened: false,
+      fixedTopBarShown: false,
       currDate: this.$date()
     }},
     
@@ -138,10 +142,18 @@
             return
 
           let dirIsDown = window.scrollY > oldScrollPos
-          if (window.scrollY > 20 && dirIsDown)
+
+          // open list
+          if (window.scrollY > 50 && dirIsDown)
             this.listOpened = true
-          else if (window.scrollY <= 20 && !dirIsDown) 
+          else if (window.scrollY <= 50 && !dirIsDown) 
             this.listOpened = false
+
+          // show fixed top bar 
+          if (window.scrollY > 200 && dirIsDown)
+            this.fixedTopBarShown = true
+          else if (window.scrollY <= 200 && !dirIsDown)
+            this.fixedTopBarShown = false
           
           oldScrollPos = window.scrollY
         }
@@ -162,7 +174,14 @@
 
       getOffsetInMinutes( date1, date2 ) {
         return this.$date(date1).diff(this.$date(date2), 'minute') + 1
-      } 
+      },
+
+      openList() {
+        window.scrollTo({
+          top: 100,
+          behavior: 'smooth'
+        })
+      }
     },
 
     async mounted() {
@@ -204,19 +223,8 @@
     z-index: 200;
 
     &.listOpened {
-      --height-navbar: 4.5rem;
       background-color: transparent;
-      transform: translateY(calc(-100vh + var(--height-navbar)));
-
-      .navbar {
-        border-radius: 0 0 1.5rem 1.5rem;
-        background: hsl(0, 0, 16, 0.4);
-        backdrop-filter: blur(20px);
-
-        button {
-          transform: rotateX(180deg);
-        }
-      }
+      transform: translateY(-100vh);
     }
 
     .hero {
@@ -252,17 +260,13 @@
       padding: 1.5rem 0;
       align-items: center;
       justify-content: center;
-
-      button {
-        transition: transform 700ms ease;
-      }
     }
   }
 
   .list {
     text-align: center;
     min-height: 110vh;
-    padding: calc(var(--height-navbar) + 5rem) 0 1rem;
+    padding: calc(100px + 2rem) 0 1rem;
 
     h1 {
       margin-bottom: 2rem;
