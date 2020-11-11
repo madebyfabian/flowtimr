@@ -2,7 +2,7 @@
   <div id="app" v-focus-visible>
     <div class="home" v-if="APIService.isAuthenticated()">
       <div v-if="events !== null">
-        <div class="main" :class="{ listOpened }">
+        <section class="main" :class="{ listOpened }">
           <div class="hero" :class="{ hasEvent: currActiveEventData }">
             <div v-if="currActiveEventData">
               <Badge :type="`blue`">Jetzt</Badge>
@@ -24,16 +24,16 @@
               <ButtonIconOnly @click="openList" />
             </div>
           </div>
-        </div>
+        </section>
 
-        <div v-if="allUpcomingEvents.length !== 0" class="list">
+        <section v-if="allUpcomingEvents.length !== 0" class="list">
           <h1>Was steht <br>noch an?</h1>
           <EventSingleCard 
             v-for="event of allUpcomingEvents" 
             :key="event.id"
             :event="event" 
           />
-        </div>
+        </section>
 
         <FixedTopBar :isShown="fixedTopBarShown" />
       </div>
@@ -269,12 +269,11 @@
   }
 
   .list {
-    text-align: center;
-    min-height: 110vh;
-    padding: calc(100px + 2rem) 0 1rem;
+    min-height: calc(100vh + 100px);
+    padding: calc(100px + 2.5rem) 1.5rem 1rem;
 
     h1 {
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
     }
   }
 </style>

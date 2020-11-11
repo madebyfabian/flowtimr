@@ -8,7 +8,7 @@
     <div class="content">
       <div class="content-main">
         <h2 v-html="event.subject" />
-        <EventInfoBar v-if="event.location._text" class="copy isSmall" :items="[ 
+        <EventInfoBar class="isSmall" :items="[ 
           event.location
         ]" />
 
@@ -195,7 +195,7 @@
       margin-right: 5rem;
     }
 
-    p {
+    .EventInfoBar {
       margin: .5rem 0 1.5rem;
       color: var(--color-content-secondary);
     }
@@ -237,30 +237,27 @@
   }
 
   .meeting {
-    --menu-btn-bg-rgb: 20, 20, 20;
+    --menu-btn-bg-rgb: 0, 0, 0;
     --border-width: 0.125rem;
 
-    margin: 1rem 1.5rem;
+    padding: 1rem 0;
     display: grid;
     grid-template-columns: 3.5rem 1fr;
     gap: .5rem;
     text-align: left;
 
     &.notAnswered {
-      --menu-btn-bg-rgb: 0, 0, 0;
+      color: var(--color-content-secondary);
 
-      .content {
-        box-shadow: inset 0 0 0 var(--border-width) var(--color-bg-secondary);
-        background: transparent!important;
+      .EventInfoBar {
+        color: var(--color-content-tertiary)!important;
       }
     }
 
     .time {
-      align-self: center;
-      
       &-start {
+        margin: .5rem 0 .25rem;
         color: var(--color-content-secondary);
-        margin-bottom: .25rem;
       }
 
       &-duration {
@@ -269,8 +266,6 @@
     }
 
     .content {
-      border-radius: 1rem;
-      background: var(--color-bg-secondary);
       position: relative;
 
       p {
@@ -284,13 +279,13 @@
         }
       }
 
-      &-main {
-        padding: .75rem 1rem;
-      }
-
       &-bottomBar {
-        padding: .5rem .5rem .625rem;
-        border-top: var(--border-width) solid var(--color-bg-secondary);
+        margin: .75rem 0 0 0;
+        // border-top: var(--border-width) solid var(--color-bg-secondary);
+
+        .button {
+          margin-left: -.5rem;
+        }
       }
 
       &-menuButton {
@@ -298,8 +293,8 @@
         visibility: hidden;
         height: 3rem;
         width: 3rem;
-        top: 0;
-        right: 0;
+        top: -.75rem;
+        right: -1rem;
         position: absolute;
         z-index: 100;
         display: flex;

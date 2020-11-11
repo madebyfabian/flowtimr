@@ -27,7 +27,7 @@
     
     methods: {
       valueIsLocationObj( val ) {
-        return typeof val === 'object' && val._text
+        return typeof val === 'object' && '_text' in val
       }
     }
   }
@@ -38,7 +38,6 @@
     word-break: break-word;
     display: inline-flex;
     flex-wrap: wrap;
-    justify-content: center;
 
     &-seperator {
       margin: 0 .66ch;
