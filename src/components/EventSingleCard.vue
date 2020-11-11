@@ -8,7 +8,9 @@
     <div class="content">
       <div class="content-main">
         <h2 v-html="event.subject" />
-        <p class="isSmall" v-if="event.location.displayName">{{ event.location.displayName }}</p>
+        <EventInfoBar v-if="event.location._text" class="copy isSmall" :items="[ 
+          event.location
+        ]" />
 
         <div class="content-menuButton">
           <Button type="iconOnly" primaryIcon="menu" @click="isEditModalOpened = true" />
@@ -31,7 +33,7 @@
       <EventInfoBar class="isSmall" :items="[
         formattedStartTime,
         formattedDuration,
-        event.location.displayName || null
+        event.location.displayName
       ]" />
 
       <div class="buttons" :class="{ isHidden: updatingEventResponse || errorUpdatingEventResponse }">
@@ -310,7 +312,7 @@
         transition: opacity 150ms ease, visibility 150ms ease;
       }
 
-      p {
+      .EventInfoBar {
         margin-top: .5rem;
       }
     }

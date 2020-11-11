@@ -56,8 +56,8 @@ h1, h2, h3, h4, p {
 h1 {
   margin: 0;
   font-weight: 900;
-  font-size: 2.5rem;
-  line-height: 3rem;
+  font-size: 2.25rem;
+  line-height: 2.5rem;
   letter-spacing: -1px;
 }
 
@@ -86,4 +86,18 @@ p, .copy {
     letter-spacing: 0.75px;
     text-transform: uppercase;
   }
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  font-size: inherit;
+  display: inline-flex;
+  align-items: center;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }

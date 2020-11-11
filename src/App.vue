@@ -9,7 +9,7 @@
               <h1 v-html="currActiveEventData.subject" />
               <EventInfoBar :items="[ 
                 currActiveEventData._custom.remainingDuration.trim(),
-                currActiveEventData.location.displayName.trim() 
+                currActiveEventData.location
               ]" />
             </div>
           
@@ -232,6 +232,10 @@
       align-items: center;
       justify-content: center;
       user-select: none;
+
+      .EventInfoBar {
+        display: flex;
+      }
 
       h1, p {
         text-align: center;

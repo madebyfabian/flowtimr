@@ -9,7 +9,7 @@
     <EventInfoBar class="eventNextUp-info isSmall" :items="[ 
       event._custom.startTimeStr.trim(), 
       event._custom.durationStr.trim(), 
-      event.location.displayName.trim() 
+      event.location
     ]" />
   </div>
 </template>
