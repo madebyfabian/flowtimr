@@ -7,19 +7,30 @@
     />
     <h2 class="eventNextUp-subject" v-html="event.subject" />
     <EventInfoBar class="eventNextUp-info isSmall" :items="[ 
-      event._custom.durationStr.trim(), 
+      formattedDuration, 
       event.location
     ]" />
   </div>
 </template>
 
 <script>
+  import formatMinutes from '@/utils/formatMinutes'
   import Badge from '@/components/Badge'
   import EventInfoBar from '@/components/EventInfoBar'
 
   export default {
     props: {
       event: { type: Object, required: true }
+    },
+
+    computed: {
+      formattedDuration() {
+        return this.formatMinutes(this.$date(this.event.end._unixDateTime).diff(this.event.start._unixDateTime, 'minute'), 'short')
+      }
+    },
+
+    methods: {
+      formatMinutes
     },
     
     components: { Badge, EventInfoBar }
