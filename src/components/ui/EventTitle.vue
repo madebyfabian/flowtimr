@@ -1,6 +1,6 @@
 <template>
-  <h1 v-if="size === 1" class="EventTitle" :class="classList" v-html="content" />
-  <h2 v-else            class="EventTitle" :class="classList" v-html="content" />
+  <h1 v-if="size === 1" class="EventTitle" :class="classList" v-html="content || '(Kein Titel)'" />
+  <h2 v-else            class="EventTitle" :class="classList" v-html="content || '(Kein Titel)'" />
 </template>
 
 <script>
@@ -9,16 +9,25 @@
       size: { type: Number, default: 2, validate: val => [ 1, 2 ].includes(val) },
       event: { type: Object, required: true }
     },
-    
+
     computed: {
       content() {
+        let subject = this.event.subject
+        if (!subject || !subject.length)  
+          return ''
+
         // Adding hidden word breaks for "foo/bar", "foo&bar" or "foo@bar".
-        return this.event.subject.trim().replace(/(?=\S)(\&|\/|\@)(?=\S)/g, '$&<wbr>')
+        return subject.trim().replace(/(?=\S)(\&|\/|\@)(?=\S)/g, '$&<wbr>')
       },
 
       classList() { return {
-        isCancelled: this.event.isCancelled
-      }}
+        isCancelled: this.event.isCancelled,
+        isEmpty: this.isEmpty
+      }},
+
+      isEmpty() {
+        return !this.content || !this.content.length
+      }
     }
   }
 </script>
