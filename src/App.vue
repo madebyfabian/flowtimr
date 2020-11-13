@@ -184,13 +184,17 @@
       // Fetch all events
       this.fetchAndUpdateEvents()
 
-      // Start the "updateCurrDate" function exactly when new minute begins.
+      // Start the "updateCurrDate" function exactly when new minute begins, every 60 seconds
       setTimeout(() => {
         this.updateCurrDate()
         setInterval(() => {
           this.updateCurrDate()
         }, 60 * 1000)
       }, (60 - this.$date().second()) * 1000)
+
+      setInterval(() => {
+        this.fetchAndUpdateEvents()
+      }, 5 * 60 * 1000) // 5 minutes
 
       // Handle automatically opening/closing list on scroll.
       this.listScrollAnimation()
