@@ -138,8 +138,8 @@
 
     .infoList {
       border-bottom: 2px solid var(--color-bg-tertiary);
-      margin: 1rem -1.5rem;
-      padding: 0 1.5rem .5rem;
+      margin: 1rem 0;
+      padding: 0 0 .5rem;
       color: var(--color-content-secondary);
 
       li {
