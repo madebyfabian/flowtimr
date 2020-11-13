@@ -1,8 +1,8 @@
 <template>
   <article class="meeting" :class="{ answerRequired }">
     <div class="time">
-      <p class="isSmall time-start">{{ formattedStartTime }}</p>
-      <p class="isSmall time-duration">{{ formattedDuration }}</p>
+      <p class="time-start isSmall" v-text="formattedTimes.start" />
+      <p class="time-duration isSmall" v-text="formattedDuration" />
     </div>
 
     <div class="content">
@@ -16,7 +16,7 @@
       </div>
 
       <div class="content-bottomBar" v-if="answerRequired">
-        <Button v-if="!isCancelled" :primaryIcon="isTentativelyAccepted ? 'question' : 'check'" secondaryIcon="down" @click="isEditModalOpened = true">
+        <Button v-if="!event.isCancelled" :primaryIcon="isTentativelyAccepted ? 'question' : 'check'" secondaryIcon="down" @click="isEditModalOpened = true">
           {{ isTentativelyAccepted ? 'Mit Vorbehalt ...' : 'Annehmen' }}
         </Button>
 
@@ -26,86 +26,51 @@
       </div>
     </div>
 
-    <Modal :isOpened="isEditModalOpened" @close="isEditModalOpened = false">
-      <EventTitle :event="event" />
-      <EventInfoBar class="isSmall" :items="[
-        formattedStartTime,
-        formattedDuration,
-        event.location
-      ]" />
-
-      <div class="buttons" :class="{ isHidden: updatingEventResponse || errorUpdatingEventResponse }">
-        <LoadingSpinner v-if="updatingEventResponse" class="buttons-overlay" />
-        <p v-if="errorUpdatingEventResponse" class="buttons-overlay error">Netzwerkfehler. Bitte nochmal versuchen.</p>
-
-        <div v-if="!event.isOrganizer && !isCancelled">
-          <Button 
-            @click="setEventAnswer('isAccepted')"
-            class="modalBtn-accept" 
-            primaryIcon="check" 
-            :isSelected="isAccepted">
-            {{ isAccepted ? 'Angenommen' : 'Annehmen' }}
-          </Button>
-
-          <Button 
-            @click="setEventAnswer('isTentativelyAccepted')"
-            class="modalBtn-tentativelyAccept" 
-            primaryIcon="question" 
-            :isSelected="isTentativelyAccepted">
-            {{ isTentativelyAccepted ? 'Mit Vorbehalt angenommen' : 'Mit Vorbehalt' }}
-          </Button>
-
-          <Button 
-            @click="setEventAnswer('isDeclined')"
-            class="modalBtn-decline" 
-            primaryIcon="close" 
-            :isSelected="isDeclined">
-            {{ isDeclined ? 'Abgelehnt' : 'Ablehnen' }}
-          </Button>
-        </div>
-
-        <Button
-          v-else
-          @click="setEventAnswer('isCancelled')"
-          class="modalBtn-cancel" 
-          :primaryIcon="event.isOrganizer ? 'event-cancel' : 'close'">
-          {{ isCancelled ? 'Aus Kalender löschen' : 'Absagen und Löschen' }}
-        </Button>
-      </div>
-    </Modal>
+    <EventDetailsModal 
+      :event="event" 
+      :isOpened="isEditModalOpened" 
+      :formattedTimes="formattedTimes"
+      :formattedDuration="formattedDuration"
+      :isAccepted="isAccepted"
+      :isTentativelyAccepted="isTentativelyAccepted"
+      :isDeclined="isDeclined"
+      @close="isEditModalOpened = false" 
+    />
   </article>
 </template>
 
 <script>
-  import { store, mutations } from '@/store'
   import formatMinutes from '@/utils/formatMinutes'
-  import { Button, Modal, LoadingSpinner, EventTitle, EventInfoBar } from '@/components/ui'
+  import { Button, EventTitle, EventInfoBar } from '@/components/ui'
+  import { EventAttendees, EventDetailsModal } from '@/components/layouts'
 
   export default {
     props: {
       event: { type: Object, required: true }
     },
 
-    components: { Button, Modal, LoadingSpinner, EventTitle, EventInfoBar },
+    components: { 
+      Button, EventTitle, EventInfoBar, 
+      EventAttendees, EventDetailsModal 
+    },
     
     data: () => ({
-      isEditModalOpened: false,
-      updatingEventResponse: false,
-      errorUpdatingEventResponse: null
+      isEditModalOpened: false
     }),
 
     computed: {
-      APIService: () => store.APIService,
-
       answerRequired() {
         let notAccepted = !this.isAccepted && !this.event.isOrganizer,
-            cancelled = this.isCancelled
+            cancelled = this.event.isCancelled
 
         return notAccepted || cancelled
       },
 
-      formattedStartTime() {
-        return this.$date(this.event.start._unixDateTime).format('HH:mm')
+      formattedTimes() {
+        return {
+          start: this.$date(this.event.start._unixDateTime).format('HH:mm'),
+          end: this.$date(this.event.end._unixDateTime).format('HH:mm')
+        }
       },
 
       formattedDuration() {
@@ -125,114 +90,16 @@
       },
 
       isCancelled() {
-        return this.event.isCancelled
-      }
-    },
-
-    watch: {
-      isEditModalOpened() {
-        this.errorUpdatingEventResponse = false
       }
     },
 
     methods: {
-      formatMinutes,
-      fetchAndUpdateEvents: mutations.fetchAndUpdateEvents,
-
-      async setEventAnswer( action ) {
-        // Quit, if the action is already been made (e.g. if the action is "accept" and the event is already accepted).
-        if (this[action])
-          return this.isEditModalOpened = false
-
-        this.updatingEventResponse = true
-        
-        try {
-          this.errorUpdatingEventResponse = false
-
-          // Call API
-          await this.APIService.postEventAnswer(this.event.id, action)
-
-          // Update Events data
-          await this.fetchAndUpdateEvents()
-
-          this.isEditModalOpened = false
-        } catch (err) {
-          console.error(err)
-          this.errorUpdatingEventResponse = true
-        }
-
-        this.updatingEventResponse = false
-      },
-
-      async handleTentativelyAcceptEvent() {
-        if (this.isTentativelyAccepted)
-          return this.isEditModalOpened = false
-
-        this.updatingEventResponse = true
-
-        // ...
-      },
-
-      async handleDeclineEvent() {
-        if (this.isDeclined)
-          return this.isEditModalOpened = false
-
-        this.updatingEventResponse = true
-
-        // ...
-      }
+      formatMinutes
     }
   }
 </script>
 
 <style lang="scss" scoped>
-  .modal {
-    h2 {
-      margin-right: 2.5rem;
-      color: var(--color-content-primary);
-    }
-
-    .EventInfoBar {
-      margin: .5rem 0 1.5rem;
-      color: var(--color-content-secondary);
-    }
-
-    .buttons {
-      position: relative;
-
-      &.isHidden .button {
-        visibility: hidden!important
-      }
-
-      &-overlay {
-        position: absolute;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        top: 1.5rem;
-
-        &.error {
-          color: var(--color-red-primary);
-          margin: 0;
-          text-align: center;
-        }
-      }
-
-      .button {
-        width: calc(100% + 1rem);
-        margin: 0.5rem -.5rem 0;
-        
-        &.modalBtn-accept {
-          margin-top: 0;
-
-          &[isSelected=true] {
-            color: var(--color-brand-primary)!important;
-          }
-        }
-      }
-    }
-  }
-
   .meeting {
     --menu-btn-bg-rgb: 0, 0, 0;
     --border-width: 0.125rem;
