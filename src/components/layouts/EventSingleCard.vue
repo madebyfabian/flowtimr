@@ -38,7 +38,7 @@
         <LoadingSpinner v-if="updatingEventResponse" class="buttons-overlay" />
         <p v-if="errorUpdatingEventResponse" class="buttons-overlay error">Netzwerkfehler. Bitte nochmal versuchen.</p>
 
-        <div v-if="!event.isOrganizer">
+        <div v-if="!event.isOrganizer && !isCancelled">
           <Button 
             @click="setEventAnswer('isAccepted')"
             class="modalBtn-accept" 
@@ -64,12 +64,12 @@
           </Button>
         </div>
 
-        <Button 
-          v-else 
+        <Button
+          v-else
           @click="setEventAnswer('isCancelled')"
           class="modalBtn-cancel" 
-          primaryIcon="event-cancel">
-          Absagen und Löschen
+          :primaryIcon="event.isOrganizer ? 'event-cancel' : 'close'">
+          {{ isCancelled ? 'Aus Kalender löschen' : 'Absagen und Löschen' }}
         </Button>
       </div>
     </Modal>
