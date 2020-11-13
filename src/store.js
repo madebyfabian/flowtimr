@@ -41,10 +41,8 @@ export const mutations = {
       }
 
       return { 
-        ...event, 
-        // location: event.location && { ...event.location, displayName: event.location.displayName.trim().replace(_replacer, '$&<wbr>') },
+        ...event,
         location: { ...event.location, ...locationData },
-        subject: event.subject.trim().replace(_replacer, '$&<wbr>'), 
         start: { ...event.start, _unixDateTime: this.$date(event.start.dateTime + 'Z').valueOf() },
         end: { ...event.end, _unixDateTime: this.$date(event.end.dateTime + 'Z').valueOf() }
       }
@@ -56,10 +54,6 @@ export const mutations = {
     return store.events = events
   }
 }
-
-
-// For adding hidden word breaks for "foo/bar", "foo&bar" or "foo@bar".
-const _replacer = /(?=\S)(\&|\/|\@)(?=\S)/g
 
 
 // Checks if string starts with either https:// or http://

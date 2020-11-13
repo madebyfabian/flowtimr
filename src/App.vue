@@ -6,7 +6,7 @@
           <div class="hero" :class="{ hasEvent: currActiveEventData }">
             <div v-if="currActiveEventData">
               <Badge :type="`active`">Jetzt</Badge>
-              <h1 v-html="currActiveEventData.subject" />
+              <EventTitle :size="1" :event="currActiveEventData" />
               <EventInfoBar :items="[ 
                 currActiveEventData._custom.remainingDuration.trim(),
                 currActiveEventData.location
@@ -51,6 +51,7 @@
 
   import Badge from '@/components/Badge'
   import ButtonIconOnly from '@/components/ButtonIconOnly'
+  import EventTitle from '@/components/EventTitle'
   import EventInfoBar from '@/components/EventInfoBar'
   import EventSingleCard from '@/components/EventSingleCard'
   import EventNextUp from '@/components/EventNextUp'
@@ -61,7 +62,7 @@
   export default {
     name: 'Home',
 
-    components: { Badge, ButtonIconOnly, EventInfoBar, EventSingleCard, EventNextUp, FixedTopBar, Signin },
+    components: { Badge, ButtonIconOnly, EventTitle, EventInfoBar, EventSingleCard, EventNextUp, FixedTopBar, Signin },
 
     data: function() { return {
       listOpened: false,
@@ -83,7 +84,7 @@
 
         // Send push notification when event is 1 minute away.
         if (offsetMin === 1)
-          new PushNotification(event.subject.replace('<wbr>', ''))
+          new PushNotification(event.subject)
 
         let offsetStr = 'In '
         if (this.currActiveEventData) {

@@ -5,7 +5,7 @@
       :type="event._custom.isClose ? 'active' : 'default'"
       v-text="event._custom.offsetStr" 
     />
-    <h2 class="eventNextUp-subject" v-html="event.subject" />
+    <EventTitle :event="event" class="eventNextUp-subject" />
     <EventInfoBar class="eventNextUp-info isSmall" :items="[ 
       formattedDuration, 
       event.location
@@ -16,12 +16,15 @@
 <script>
   import formatMinutes from '@/utils/formatMinutes'
   import Badge from '@/components/Badge'
+  import EventTitle from '@/components/EventTitle'
   import EventInfoBar from '@/components/EventInfoBar'
 
   export default {
     props: {
       event: { type: Object, required: true }
     },
+
+    components: { Badge, EventTitle, EventInfoBar },
 
     computed: {
       formattedDuration() {
@@ -31,33 +34,28 @@
 
     methods: {
       formatMinutes
-    },
-    
-    components: { Badge, EventInfoBar }
+    }
   }
 </script>
 
 <style lang="scss" scoped>
   .eventNextUp {
+    --title: var(--color-content-secondary);
+    --subtitle: var(--color-content-tertiary);
     margin-right: 1.5rem;
+
+    &.isClose {
+      --title: var(--color-content-primary);
+      --subtitle: var(--color-content-secondary);
+    }
 
     &-subject {
       margin: .75rem 0 .25rem;
-      color: var(--color-content-secondary);
+      color: var(--title);
     }
 
     &-info {
-      color: var(--color-content-tertiary)
-    }
-
-    &.isClose {
-      .nextUp-subject {
-        color: var(--color-content-primary);
-      }
-
-      .nextUp-info {
-        color: var(--color-content-secondary);
-      }
+      color: var(--subtitle)
     }
   }
 </style>

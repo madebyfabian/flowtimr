@@ -1,5 +1,5 @@
 <template>
-  <article class="meeting" :class="{ notAnswered: !isRequired }">
+  <article class="meeting" :class="{ answerRequired }">
     <div class="time">
       <p class="isSmall time-start">{{ formattedStartTime }}</p>
       <p class="isSmall time-duration">{{ formattedDuration }}</p>
@@ -7,29 +7,27 @@
 
     <div class="content">
       <div class="content-main">
-        <h2 v-html="event.subject" />
-        <EventInfoBar class="isSmall" :items="[ 
-          event.location
-        ]" />
+        <EventTitle :event="event" />
+        <EventInfoBar class="isSmall" :items="[ event.location ]" />
 
         <div class="content-menuButton">
           <Button type="iconOnly" primaryIcon="menu" @click="isEditModalOpened = true" />
         </div>
       </div>
 
-      <div class="content-bottomBar" v-if="!isRequired">
-        <Button 
-          :primaryIcon="isTentativelyAccepted ? 'question' : 'check'" 
-          secondaryIcon="down" 
-          @click="isEditModalOpened = true">
-          
+      <div class="content-bottomBar" v-if="answerRequired">
+        <Button v-if="!isCancelled" :primaryIcon="isTentativelyAccepted ? 'question' : 'check'" secondaryIcon="down" @click="isEditModalOpened = true">
           {{ isTentativelyAccepted ? 'Mit Vorbehalt ...' : 'Annehmen' }}
+        </Button>
+
+        <Button v-else :primaryIcon="'close'" @click="isEditModalOpened = true">
+          Löschen
         </Button>
       </div>
     </div>
 
     <Modal :isOpened="isEditModalOpened" @close="isEditModalOpened = false">
-      <h2 v-html="event.subject" />
+      <EventTitle :event="event" />
       <EventInfoBar class="isSmall" :items="[
         formattedStartTime,
         formattedDuration,
@@ -83,6 +81,7 @@
   import Button from '@/components/Button'
   import Modal from '@/components/Modal'
   import LoadingSpinner from '@/components/LoadingSpinner'
+  import EventTitle from '@/components/EventTitle'
   import EventInfoBar from '@/components/EventInfoBar'
 
   import { store, mutations } from '@/store'
@@ -93,7 +92,7 @@
       event: { type: Object, required: true }
     },
 
-    components: { Button, Modal, LoadingSpinner, EventInfoBar },
+    components: { Button, Modal, LoadingSpinner, EventTitle, EventInfoBar },
     
     data: () => ({
       isEditModalOpened: false,
@@ -104,8 +103,11 @@
     computed: {
       APIService: () => store.APIService,
 
-      isRequired() { // When user MUST attend this event.
-        return this.isAccepted || this.event.isOrganizer
+      answerRequired() {
+        let notAccepted = !this.isAccepted && !this.event.isOrganizer,
+            cancelled = this.isCancelled
+
+        return notAccepted || cancelled
       },
 
       formattedStartTime() {
@@ -192,7 +194,7 @@
 <style lang="scss" scoped>
   .modal {
     h2 {
-      margin-right: 5rem;
+      margin-right: 2.5rem;
       color: var(--color-content-primary);
     }
 
@@ -247,7 +249,7 @@
     gap: .5rem;
     text-align: left;
 
-    &.notAnswered {
+    &.answerRequired {
       color: var(--color-content-secondary);
 
       .content .EventInfoBar {
@@ -285,7 +287,7 @@
         // border-top: var(--border-width) solid var(--color-bg-secondary);
 
         .button {
-          margin-left: -.5rem;
+          margin: 0 0 0 -.5rem;
         }
       }
 
