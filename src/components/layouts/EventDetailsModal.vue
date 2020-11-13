@@ -27,7 +27,7 @@
       <LoadingSpinner v-if="updatingEventResponse" class="buttons-overlay" />
       <p v-if="errorUpdatingEventResponse" class="buttons-overlay error">Netzwerkfehler. Bitte nochmal versuchen.</p>
 
-      <div v-if="!event.isOrganizer && !event.isCancelled">
+      <div v-if="!event.isOrganizer && !event.isCancelled" class="buttons-group">
         <Button
           v-for="(button, key) of modalButtons"
           :key="key"
@@ -174,6 +174,13 @@
     .buttons {
       position: relative;
       margin-bottom: -.5rem;
+      
+
+      &-group {
+        display: grid;
+        gap: .5rem;
+        grid-template-rows: repeat(3, 1fr);
+      }
 
       &.isHidden .button {
         visibility: hidden!important
@@ -195,7 +202,7 @@
 
       .button {
         width: calc(100% + 1rem);
-        margin: 0.5rem -.5rem 0;
+        margin: 0 -.5rem;
 
         &:last-child {
           margin-top: 0;
