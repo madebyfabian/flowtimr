@@ -77,15 +77,9 @@
 </template>
 
 <script>
-  import formatMinutes from '@/utils/formatMinutes'
-  import Button from '@/components/Button'
-  import Modal from '@/components/Modal'
-  import LoadingSpinner from '@/components/LoadingSpinner'
-  import EventTitle from '@/components/EventTitle'
-  import EventInfoBar from '@/components/EventInfoBar'
-
   import { store, mutations } from '@/store'
-
+  import formatMinutes from '@/utils/formatMinutes'
+  import { Button, Modal, LoadingSpinner, EventTitle, EventInfoBar } from '@/components/ui'
 
   export default {
     props: {

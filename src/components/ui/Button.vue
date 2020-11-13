@@ -23,11 +23,11 @@
 
     computed: {
       primaryIconSrc() {
-        return this.primaryIcon && require(`../assets/icons/icon-${this.primaryIcon}.svg`)
+        return this.primaryIcon && require(`../../assets/icons/icon-${this.primaryIcon}.svg`)
       },
 
       secondaryIconSrc() {
-        return this.secondaryIcon && require(`../assets/icons/icon-${this.secondaryIcon}.svg`)
+        return this.secondaryIcon && require(`../../assets/icons/icon-${this.secondaryIcon}.svg`)
       }
     }
   }

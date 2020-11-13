@@ -15,9 +15,7 @@
 
 <script>
   import formatMinutes from '@/utils/formatMinutes'
-  import Badge from '@/components/Badge'
-  import EventTitle from '@/components/EventTitle'
-  import EventInfoBar from '@/components/EventInfoBar'
+  import { Badge, EventTitle, EventInfoBar } from '@/components/ui'
 
   export default {
     props: {

@@ -46,23 +46,20 @@
 
   import PushNotification from '@/services/PushNotification'
   import formatMinutes from '@/utils/formatMinutes'
-
   import { store, mutations } from '@/store'
 
-  import Badge from '@/components/Badge'
-  import ButtonIconOnly from '@/components/ButtonIconOnly'
-  import EventTitle from '@/components/EventTitle'
-  import EventInfoBar from '@/components/EventInfoBar'
-  import EventSingleCard from '@/components/EventSingleCard'
-  import EventNextUp from '@/components/EventNextUp'
-  import FixedTopBar from '@/components/FixedTopBar'
-  import Signin from '@/components/Signin'
-
+  import { Badge, ButtonIconOnly, EventTitle, EventInfoBar, FixedTopBar } from '@/components/ui'
+  import { Signin } from '@/components/pages'
+  import { EventSingleCard, EventNextUp } from '@/components/layouts'
+  
 
   export default {
     name: 'Home',
 
-    components: { Badge, ButtonIconOnly, EventTitle, EventInfoBar, EventSingleCard, EventNextUp, FixedTopBar, Signin },
+    components: { 
+      Badge, ButtonIconOnly, EventTitle, EventInfoBar, EventSingleCard, FixedTopBar, 
+      EventNextUp, Signin
+    },
 
     data: function() { return {
       listOpened: false,

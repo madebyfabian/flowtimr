@@ -14,7 +14,7 @@
 
 <script>
   import FocusLock from 'vue-focus-lock'
-  import Button from '@/components/Button'
+  import { Button } from '@/components/ui'
 
   export default {
     components: { FocusLock, Button },
