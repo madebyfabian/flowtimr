@@ -62,7 +62,7 @@
       border-radius: 2rem 2rem 0 0;
       width: 100%;
       background: var(--color-bg-secondary);
-      padding: 1.5rem 1.5rem 2.5rem;
+      padding: 1.5rem;
       position: relative;
 
       .button {
