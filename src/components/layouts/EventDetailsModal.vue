@@ -173,6 +173,7 @@
 
     .buttons {
       position: relative;
+      margin-bottom: -.5rem;
 
       &.isHidden .button {
         visibility: hidden!important
@@ -195,6 +196,10 @@
       .button {
         width: calc(100% + 1rem);
         margin: 0.5rem -.5rem 0;
+
+        &:last-child {
+          margin-top: 0;
+        }
         
         &.modalBtn-accept {
           margin-top: 0;
