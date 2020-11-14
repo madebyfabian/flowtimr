@@ -5,25 +5,29 @@
 </template>
 
 <script>
+  import { computed } from 'vue'
+
   export default {
     props: {
       name: { type: String, required: true }
     },
 
-    computed: {
+    setup( props ) {
       /**
        * Transform the name param to avatar letters. e.g.:
        * "Lisa W" => "LW", "Max Frank Bauer" => "MF", "john.deer@mail.com" => "JD", "Nick" => "N"
        */
-      letters() {
-        let name = this.name.trim(),
+      const letters = computed(() => {
+        let name = props.name.trim(),
             splitter = name.includes('.') ? '.' : ' '
 
         return name.split(splitter)
           .map(str => str.substr(0, 1))
           .join('')
           .substr(0, 2)
-      }
+      })
+      
+      return { letters } 
     }
   }
 </script>
