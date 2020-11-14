@@ -1,25 +1,31 @@
-import Vue from 'vue'
-import App from './App.vue'
-import './registerServiceWorker'
+import { createApp } from 'vue'
+import App from '@/App.vue'
+import '@/registerServiceWorker'
 
 
-// <inline-svg>
-import InlineSvg from 'vue-inline-svg'
-Vue.component('inline-svg', InlineSvg)
+// Init app.
+const app = createApp(App)
+app.config.productionTip = false
 
 
-// FocusVisible
+// Adding new, vue3 svg inline plugin.
+import VueSvgInlinePlugin from 'vue-svg-inline-plugin'
+app.use(VueSvgInlinePlugin)
+
+
+// Init FocusVisible.
 import FocusVisible from 'vue-focus-visible'
-Vue.use(FocusVisible)
+app.use(FocusVisible)
 
 
-// dayjs
-import '@/plugins/Dayjs'
+// Adding global dayjs plugin.
+import Dayjs from '@/plugins/Dayjs'
+app.config.globalProperties.$date = Dayjs
 
 
-Vue.config.productionTip = false
+// Adding new, vue3 <FocusTrap> component.
+import { FocusTrap } from 'focus-trap-vue'
+app.component('FocusTrap', FocusTrap)
 
 
-new Vue({
-  render: h => h(App)
-}).$mount('#app')
+app.mount('#app')

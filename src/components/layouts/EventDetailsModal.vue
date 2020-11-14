@@ -6,19 +6,21 @@
         <EventAttendees class="infoList-item" :event="event" />
       </li>
 
+      
+
       <li>
-        <inline-svg class="infoList-icon" :src="require('../../assets/icons/icon-time.svg')" />
+        <img v-svg-inline class="infoList-icon" src="../../assets/icons/icon-time.svg">
         {{ formattedTimes.start }} &rarr; {{ formattedTimes.end }}
         <span class="infoList-secondary" v-text="`— ${ formattedDuration }`" />
       </li>
 
       <li v-if="event.location._text">
-        <inline-svg class="infoList-icon" :src="require('../../assets/icons/icon-location.svg')" />
+        <img v-svg-inline class="infoList-icon" src="../../assets/icons/icon-location.svg">
         <EventInfoItem :item="event.location" />
       </li>
 
       <li v-if="event.bodyPreview">
-        <inline-svg class="infoList-icon" :src="require('../../assets/icons/icon-text.svg')" />
+        <img v-svg-inline class="infoList-icon" src="../../assets/icons/icon-text.svg">
         <span class="infoList-truncated">{{ event.bodyPreview }}</span>
       </li>
     </ul>

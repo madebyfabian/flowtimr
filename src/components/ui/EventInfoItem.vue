@@ -6,7 +6,7 @@
     target="_blank">
 
     {{ item._text }}
-    <inline-svg :src="require('../../assets/icons/icon-top-right.svg')" />
+    <img v-svg-inline src="../../assets/icons/icon-top-right.svg">
   </a>
 
   <span 

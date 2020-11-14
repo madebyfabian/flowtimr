@@ -1,23 +1,22 @@
 <template>
   <transition name="slide-fade">
     <div class="modalWindow" v-if="isOpened">
-      <FocusLock>
+      <FocusTrap v-model="isOpened">
         <div class="modal">
           <Button type="iconOnly" primaryIcon="close" @click="$emit('close')" />
           
           <slot />
         </div>
-      </FocusLock>
+      </FocusTrap>
     </div>
   </transition>
 </template>
 
 <script>
-  import FocusLock from 'vue-focus-lock'
   import { Button } from '@/components/ui'
 
   export default {
-    components: { FocusLock, Button },
+    components: { Button },
 
     props: {
       isOpened: { type: Boolean, required: true }
@@ -26,19 +25,21 @@
 </script>
 
 <style lang="scss" scoped>
-  .slide-fade-enter-active, .slide-fade-leave-active {
-    transition: all 150ms ease;
-
-    .modal {
-      transition: all 150ms ease;
-    }
-  }
-
-  .slide-fade-enter, .slide-fade-leave-to {
+  .slide-fade-enter-from, 
+  .slide-fade-leave-to {
     opacity: 0;
 
     .modal {
       transform: translateY(10vh);
+    }
+  }
+
+  .slide-fade-enter-active, 
+  .slide-fade-leave-active {
+    transition: all 150ms ease;
+
+    .modal {
+      transition: all 150ms ease;
     }
   }
 

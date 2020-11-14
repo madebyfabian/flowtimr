@@ -6,9 +6,9 @@
     :aria-label="type === 'iconOnly' ? primaryIcon : null"
     @click="$emit('click')">
 
-    <inline-svg v-if="primaryIconSrc" :src="primaryIconSrc" />
+    <img v-svg-inline v-if="primaryIconSrc" :src="primaryIconSrc">
     <span v-if="type !== 'iconOnly'"><slot /></span>
-    <inline-svg v-if="secondaryIconSrc && type !== 'iconOnly'" :src="secondaryIconSrc" />
+    <img v-svg-inline v-if="secondaryIconSrc && type !== 'iconOnly'" :src="secondaryIconSrc">
   </button>
 </template>
 

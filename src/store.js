@@ -1,8 +1,8 @@
-import Vue from 'vue'
+import { reactive } from 'vue'
 import APIService from '@/services/APIService'
 
 
-export const store = Vue.observable({
+export const store = reactive({
   APIService: new APIService(),
   events: null
 })
