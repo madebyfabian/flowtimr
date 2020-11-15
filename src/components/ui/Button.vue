@@ -3,8 +3,7 @@
     class="copy button" 
     :type="type" 
     :isSelected="isSelected"
-    :aria-label="type === 'iconOnly' ? primaryIcon : null"
-    @click="$emit('click')">
+    :aria-label="type === 'iconOnly' ? primaryIcon : null">
 
     <Icon v-if="primaryIcon" :name="primaryIcon" />
     <span v-if="type !== 'iconOnly'"><slot /></span>
