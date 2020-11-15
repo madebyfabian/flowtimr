@@ -125,7 +125,7 @@
 
     .time {
       &-start {
-        margin: .5rem 0 .25rem;
+        margin: 0.375rem 0 0.125rem;
         color: var(--color-content-secondary);
       }
 
