@@ -1,6 +1,7 @@
 <template>
   <a 
     v-if="isLocationObj && item._redirectTo" 
+    class="EventInfoItem"
     :href="item._redirectTo"
     rel="noopener"
     target="_blank">
@@ -11,21 +12,22 @@
 
   <span 
     v-else
+    class="EventInfoItem"
     v-text="isLocationObj ? item._text : item" 
   />
 </template>
 
 <script>
+  import { computed } from 'vue'
+
   export default {
     props: {
       item: { type: [ Object, String ], required: true }
     },
 
-    computed: {
-      isLocationObj() {
-        return typeof this.item === 'object' && '_text' in this.item
-      }
-    }
+    setup: props => ({
+      isLocationObj: computed(() => typeof props.item === 'object' && '_text' in props.item)
+    })
   }
 </script>
 
