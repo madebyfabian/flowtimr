@@ -44,9 +44,10 @@
     align-items: center;
     justify-content: center;
     user-select: none;
+    flex-shrink: 0;
     
     span {
-      font-size: 0.6875em;
+      font-size: 0.625em;
       font-weight: bold;
       text-transform: uppercase;
     }

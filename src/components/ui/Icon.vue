@@ -1,5 +1,5 @@
 <template>
-  <img class="Icon" v-svg-inline.sprite :src="iconSrc" :alt="name">
+  <img v-svg-inline class="Icon" :src="iconSrc" :alt="name">
 </template>
 
 <script>

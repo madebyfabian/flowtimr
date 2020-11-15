@@ -42,7 +42,6 @@
 <script>
   import formatMinutes from '@/utils/formatMinutes'
 
-  import EventAttendees from '@/components/layouts/EventAttendees'
   import EventDetailsModal from '@/components/layouts/EventDetailsModal'
 
   import Button from '@/components/ui/Button'
@@ -56,7 +55,7 @@
 
     components: { 
       Button, EventTitle, EventInfoBar, 
-      EventAttendees, EventDetailsModal 
+      EventDetailsModal 
     },
     
     data: () => ({

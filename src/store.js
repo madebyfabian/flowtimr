@@ -51,6 +51,9 @@ export const mutations = {
     // Sort events by date.
     events = events.sort(( a, b ) => a.start._unixDateTime - b.start._unixDateTime)
 
+    // console.log(events)
+    // debugger
+
     return store.events = events
   }
 }

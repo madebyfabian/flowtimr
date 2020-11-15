@@ -1,58 +1,147 @@
 <template>
-  <a 
-    v-if="isLocationObj && item._redirectTo" 
-    class="EventInfoItem"
-    :href="item._redirectTo"
-    rel="noopener"
-    target="_blank">
+  <li class="EventInfoItem" :class="{ isTruncated }">
+    <Avatar
+      v-if="isOrganizerObj"
+      class="EventInfoItem-avatar"
+      :name="item.emailAddress.name"
+    />
 
-    {{ item._text }}
-    <img v-svg-inline src="../../assets/icons/icon-top-right.svg">
-  </a>
+    <Icon 
+      v-if="icon" 
+      class="EventInfoItem-icon"
+      :name="icon" 
+    />
 
-  <span 
-    v-else
-    class="EventInfoItem"
-    v-text="isLocationObj ? item._text : item" 
-  />
+    <component 
+      :is="isLink ? 'a' : 'span'"
+      :href="isLink && item._redirectTo"
+      :rel="isLink && 'noopener'"
+      :target="isLink && '_blank'">
+
+      {{ label }}
+      <Icon v-if="isLink" name="top-right" />
+    </component>
+
+    <span
+      v-if="secondaryLabel"
+      v-text="`— ${ secondaryLabel }`" 
+      :title="secondaryTitle"
+      class="EventInfoItem-secondary"
+    />
+  </li>
 </template>
 
 <script>
   import { computed } from 'vue'
 
+  import Icon from '@/components/ui/Icon'
+  import Avatar from '@/components/ui/Avatar'
+
   export default {
     props: {
-      item: { type: [ Object, String ], required: true }
+      item:         { type: [ Object, String ], required: true },
+      secondary:    { type: [ Object, String ], default: null },
+      isTruncated:  { type: Boolean, default: false },
+      icon:         { type: String, default: null, validator: val => val.length }
     },
 
-    setup: props => ({
-      isLocationObj: computed(() => typeof props.item === 'object' && '_text' in props.item)
-    })
+    components: { Icon, Avatar },
+
+    setup: props => {
+      /**
+       * "item" prop
+       */
+      const isLocationObj   = computed(() => props.item?._text),
+            isOrganizerObj  = computed(() => props.item?.emailAddress),
+            isLink          = computed(() => isLocationObj.value && props.item?._redirectTo)
+
+      const label = computed(() => {
+        if (isLocationObj.value) return props.item._text
+        if (isOrganizerObj.value) return props.item.emailAddress.name
+        return props.item
+      })
+
+
+      /**
+       * "secondary" prop
+       */
+      const secondaryIsAttendeesArr = computed(() => Array.isArray(props.secondary) && props.secondary?.[0]?.emailAddress)
+
+      const secondaryLabel = computed(() => {
+        if (!props.secondary?.length) return null
+        if (!secondaryIsAttendeesArr.value) return props.secondary
+        let attendeesAmount = props.secondary.length
+        return attendeesAmount > 1 ? `${ attendeesAmount} Teilnehmer` : ''
+      })
+
+      const secondaryTitle = computed(() => {
+        if (!secondaryIsAttendeesArr.value) return null
+        return props.secondary.map(person => person.emailAddress.name).join('; ')
+      })
+      
+
+      return { 
+        isLocationObj, isOrganizerObj, isLink, label,
+        secondaryLabel, secondaryTitle
+      }
+    }
   }
 </script>
 
 <style lang="scss" scoped>
-  span {
-    white-space: nowrap;
-  }
+  .EventInfoItem {
+    display: flex;
 
-  a {
-    --icon-spacing: .25ch;
-    --icon-size: 1.75ch;
-    display: inline-flex;
-    flex-shrink: 0;
-    position: relative;
-
-    svg {
-      opacity: .5;
-      height: var(--icon-size);
-      width: var(--icon-size);
-      margin-left: var(--icon-spacing);
-      transition: transform 150ms ease;
+    &:not(.isTruncated) &-secondary {
+      white-space: nowrap;
     }
 
-    &:hover svg {
-      transform: translate(.125rem, -.125rem);
+    &.isTruncated span {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+
+    &-icon, &-secondary {
+      color: var(--color-content-tertiary);
+    }
+
+    &-secondary {
+      display: block;
+      margin-left: .375rem;
+    }
+
+    &-icon, &-avatar {
+      flex-shrink: 0;
+      margin: .125rem calc(.5rem - 1px) 0 -1px;
+    }
+
+    &-icon {
+      height: 1rem;
+      width: 1rem;
+    }
+
+    &-avatar {
+      font-size: 1rem;
+    }
+
+    a {
+      display: inline-flex;
+      flex-shrink: 0;
+      position: relative;
+
+      svg {
+        opacity: .5;
+        height: 1.75ch;
+        width: 1.75ch;
+        margin-left: .25ch;
+        transition: transform 150ms ease;
+      }
+
+      &:hover svg {
+        transform: translate(.125rem, -.125rem);
+      }
     }
   }
 </style>

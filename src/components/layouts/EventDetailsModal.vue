@@ -2,25 +2,10 @@
   <Modal :isOpened="isOpened" @close="handleCloseModal" class="EventDetailsModal">
     <EventTitle :event="event" />
     <ul class="infoList copy isSmall">
-      <li>
-        <EventAttendees class="infoList-item" :event="event" />
-      </li>
-
-      <li>
-        <img v-svg-inline class="infoList-icon" src="../../assets/icons/icon-time.svg">
-        {{ formattedTimes.start }} &rarr; {{ formattedTimes.end }}
-        <span class="infoList-secondary" v-text="`— ${ formattedDuration }`" />
-      </li>
-
-      <li v-if="event.location._text">
-        <img v-svg-inline class="infoList-icon" src="../../assets/icons/icon-location.svg">
-        <EventInfoItem :item="event.location" />
-      </li>
-
-      <li v-if="event.bodyPreview">
-        <img v-svg-inline class="infoList-icon" src="../../assets/icons/icon-text.svg">
-        <span class="infoList-truncated">{{ event.bodyPreview }}</span>
-      </li>
+      <EventInfoItem :item="event.organizer" :secondary="event.attendees" />
+      <EventInfoItem :item="`${ formattedTimes.start } &rarr; ${ formattedTimes.end }`" :secondary="formattedDuration" icon="time" />
+      <EventInfoItem v-if="event.location._text" :item="event.location" icon="location" />
+      <EventInfoItem v-if="event.bodyPreview" :item="event.bodyPreview" icon="text" isTruncated />
     </ul>
 
     <div class="buttons" :class="{ isHidden: updatingEventResponse || errorUpdatingEventResponse }">
@@ -52,8 +37,6 @@
 
 <script>
   import { store, mutations } from '@/store'
-
-  import EventAttendees from '@/components/layouts/EventAttendees'
   
   import Button from '@/components/ui/Button'
   import Modal from '@/components/ui/Modal'
@@ -77,7 +60,7 @@
       errorUpdatingEventResponse: null
     }),
 
-    components: { Button, Modal, LoadingSpinner, EventTitle, EventInfoItem, EventAttendees },
+    components: { Button, Modal, LoadingSpinner, EventTitle, EventInfoItem },
 
     computed: {
       APIService: () => store.APIService,
@@ -148,32 +131,8 @@
       padding: 0 0 .5rem;
       color: var(--color-content-secondary);
 
-      li {
+      .EventInfoItem {
         margin-bottom: .75rem;
-        display: flex;
-
-        .infoList-icon, .infoList-secondary {
-          color: var(--color-content-tertiary);
-        }
-
-        .infoList-icon {
-          height: 1rem;
-          width: 1rem;
-          flex-shrink: 0;
-          margin: .125rem calc(.5rem - 1px) 0 -1px
-        }
-        
-        .infoList-secondary {
-          display: block;
-          margin-left: .375rem;
-        }
-
-        .infoList-truncated {
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 3;
-          overflow: hidden;
-        }
       }
     }
 
