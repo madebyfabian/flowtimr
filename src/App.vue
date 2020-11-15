@@ -20,7 +20,9 @@
           <div class="eventNextUp-wrapper" v-if="allUpcomingEvents.length !== 0">
             <EventNextUp v-if="nextEventData" :event="nextEventData" />
 
-            <ButtonIconOnly @click="openList" />
+            <button @click="openList">
+              <Icon name="down" />
+            </button>
           </div>
         </section>
 
@@ -48,16 +50,23 @@
   import formatMinutes from '@/utils/formatMinutes'
   import { store, mutations } from '@/store'
 
-  import { Badge, ButtonIconOnly, EventTitle, EventInfoBar, FixedTopBar } from '@/components/ui'
-  import { Signin } from '@/components/pages'
-  import { EventSingleCard, EventNextUp } from '@/components/layouts'
+  import Signin from '@/components/pages/Signin'
+
+  import EventSingleCard from '@/components/layouts/EventSingleCard'
+  import EventNextUp from '@/components/layouts/EventNextUp'
+
+  import Badge from '@/components/ui/Badge'
+  import EventTitle from '@/components/ui/EventTitle'
+  import EventInfoBar from '@/components/ui/EventInfoBar'
+  import FixedTopBar from '@/components/ui/FixedTopBar'
+  import Icon from '@/components/ui/Icon'
   
 
   export default {
     name: 'Home',
 
     components: { 
-      Badge, ButtonIconOnly, EventTitle, EventInfoBar, EventSingleCard, FixedTopBar, 
+      Badge, EventTitle, EventInfoBar, EventSingleCard, FixedTopBar, Icon,
       EventNextUp, Signin
     },
 
@@ -260,8 +269,22 @@
       margin-bottom: 2.5rem;
 
       button {
+        flex-shrink: 0;
         margin-right: 0;
         margin-left: auto;
+        height: 2.5rem;
+        width: 2.5rem;
+        border-radius: 2.5rem;
+        box-shadow: inset 0 0 0 4px var(--color-bg-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        background: transparent;
+        outline: none;
+        border-style: none;
+        cursor: pointer;
+        color: var(--color-content-tertiary);
       }
     }
   }

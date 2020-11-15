@@ -6,13 +6,16 @@
     :aria-label="type === 'iconOnly' ? primaryIcon : null"
     @click="$emit('click')">
 
-    <img v-svg-inline v-if="primaryIconSrc" :src="primaryIconSrc">
+    <Icon v-if="primaryIcon" :name="primaryIcon" />
     <span v-if="type !== 'iconOnly'"><slot /></span>
-    <img v-svg-inline v-if="secondaryIconSrc && type !== 'iconOnly'" :src="secondaryIconSrc">
+    <Icon v-if="secondaryIcon && type !== 'iconOnly'" :name="secondaryIcon" />
   </button>
 </template>
 
 <script>
+  import { computed } from 'vue'
+  import Icon from '@/components/ui/Icon'
+
   export default {
     props: {
       type:           { type: String, default: 'tertiary', validator: val => [ 'tertiary', 'iconOnly' ].includes(val) },
@@ -21,15 +24,7 @@
       isSelected:     { type: Boolean, default: false }
     },
 
-    computed: {
-      primaryIconSrc() {
-        return this.primaryIcon && require(`../../assets/icons/icon-${this.primaryIcon}.svg`)
-      },
-
-      secondaryIconSrc() {
-        return this.secondaryIcon && require(`../../assets/icons/icon-${this.secondaryIcon}.svg`)
-      }
-    }
+    components: { Icon }
   }
 </script>
 

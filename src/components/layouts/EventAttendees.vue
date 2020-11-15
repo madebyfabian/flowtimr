@@ -16,7 +16,7 @@
 </template>
 
 <script>
-  import { Avatar } from '@/components/ui'
+  import Avatar from '@/components/ui/Avatar'
 
   export default {
     props: {

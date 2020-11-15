@@ -6,8 +6,6 @@
         <EventAttendees class="infoList-item" :event="event" />
       </li>
 
-      
-
       <li>
         <img v-svg-inline class="infoList-icon" src="../../assets/icons/icon-time.svg">
         {{ formattedTimes.start }} &rarr; {{ formattedTimes.end }}
@@ -54,9 +52,15 @@
 
 <script>
   import { store, mutations } from '@/store'
-  import { Button, Modal, LoadingSpinner, EventTitle, EventInfoItem } from '@/components/ui'
-  import { EventAttendees } from '@/components/layouts'
 
+  import EventAttendees from '@/components/layouts/EventAttendees'
+  
+  import Button from '@/components/ui/Button'
+  import Modal from '@/components/ui/Modal'
+  import LoadingSpinner from '@/components/ui/LoadingSpinner'
+  import EventTitle from '@/components/ui/EventTitle'
+  import EventInfoItem from '@/components/ui/EventInfoItem'
+  
   export default {
     props: {
       event: { required: true },

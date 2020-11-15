@@ -41,8 +41,13 @@
 
 <script>
   import formatMinutes from '@/utils/formatMinutes'
-  import { Button, EventTitle, EventInfoBar } from '@/components/ui'
-  import { EventAttendees, EventDetailsModal } from '@/components/layouts'
+
+  import EventAttendees from '@/components/layouts/EventAttendees'
+  import EventDetailsModal from '@/components/layouts/EventDetailsModal'
+
+  import Button from '@/components/ui/Button'
+  import EventTitle from '@/components/ui/EventTitle'
+  import EventInfoBar from '@/components/ui/EventInfoBar'
 
   export default {
     props: {

@@ -13,7 +13,6 @@
 </template>
 
 <script>
-  // Don't switch this to "import { EventInfoItem } from ...", since it will create a circular dependency
   import EventInfoItem from '@/components/ui/EventInfoItem' 
 
   export default {
