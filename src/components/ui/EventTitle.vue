@@ -1,33 +1,33 @@
 <template>
-  <h1 v-if="size === 1" class="EventTitle" :class="classList" v-html="content || '(Kein Titel)'" />
-  <h2 v-else            class="EventTitle" :class="classList" v-html="content || '(Kein Titel)'" />
+  <component 
+    :is="size === 1 ? 'h1' : 'h2'"
+    class="EventTitle"
+    :class="{ isCancelled }"
+    v-html="content"
+  />
 </template>
 
 <script>
+  import { computed } from 'vue'
+
   export default {
     props: {
       size: { type: Number, default: 2, validate: val => [ 1, 2 ].includes(val) },
       event: { type: Object, required: true }
     },
 
-    computed: {
-      content() {
-        let subject = this.event.subject
-        if (!subject || !subject.length)  
-          return ''
+    setup( props ) {
+      const content = computed(() => {
+        let subject = props.event?.subject
+        if (!subject?.length) return '(Kein Titel)'
 
         // Adding hidden word breaks for "foo/bar", "foo&bar" or "foo@bar".
         return subject.trim().replace(/(?=\S)(\&|\/|\@)(?=\S)/g, '$&<wbr>')
-      },
+      })
 
-      classList() { return {
-        isCancelled: this.event.isCancelled,
-        isEmpty: this.isEmpty
-      }},
+      const isCancelled = props.event?.isCancelled
 
-      isEmpty() {
-        return !this.content || !this.content.length
-      }
+      return { content, isCancelled }
     }
   }
 </script>
