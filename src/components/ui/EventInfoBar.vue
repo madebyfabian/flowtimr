@@ -4,15 +4,12 @@
       <EventInfoItem :item="item" />
       <span class="EventInfoBar-seperator" v-if="key + 1 !== filteredItems.length" v-text="'–'" />
     </li>
-
-    <pre style="display: none">
-      {{filteredItems}}
-      {{items.length}}
-    </pre>
   </ul>
 </template>
 
 <script>
+  import { computed } from 'vue'
+
   import EventInfoItem from '@/components/ui/EventInfoItem' 
 
   export default {
@@ -22,21 +19,14 @@
 
     components: { EventInfoItem },
 
-    computed: {
-      filteredItems() {
-        return this.items.filter(item => {
-          if (this.valueIsLocationObj(item))
-            return !!item && item._text && item._text.length
-          else
-            return !!item
-        }) 
-      }
-    },
-    
-    methods: {
-      valueIsLocationObj( val ) {
-        return typeof val === 'object' && '_text' in val
-      }
+    setup( props ) {
+      const valueIsLocationObj = val => typeof val === 'object' && '_text' in val
+
+      const filteredItems = computed(() => props.items.filter(item => {
+        return !valueIsLocationObj(item) ? item : item && item._text?.length
+      }))
+
+      return { filteredItems }
     }
   }
 </script>
