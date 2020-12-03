@@ -42,4 +42,8 @@
       display: inline-block;
     }
   }
+  
+  .EventInfoItem {
+    display: inline-flex;
+  }
 </style>
