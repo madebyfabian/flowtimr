@@ -16,7 +16,8 @@
       :is="isLink ? 'a' : 'span'"
       :href="isLink && item._redirectTo"
       :rel="isLink && 'noopener'"
-      :target="isLink && '_blank'">
+      :target="isLink && '_blank'"
+      :title="label">
 
       {{ label }}
       <Icon v-if="isLink" name="top-right" />
