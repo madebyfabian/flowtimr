@@ -8,7 +8,7 @@
     <div class="content">
       <div class="content-main">
         <EventTitle :event="event" />
-        <EventInfoBar class="isSmall" :items="[ event.location ]" />
+        <EventInfoBar class="isSmall" v-if="event.location" :items="[ event.location ]" />
 
         <div class="content-menuButton">
           <Button type="iconOnly" primaryIcon="menu" @click="isEditModalOpened = true" />
