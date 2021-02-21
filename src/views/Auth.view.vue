@@ -2,12 +2,22 @@
   <div class="signin">
     <div>
       <h1>flowtimr</h1>
-      <button @click="$emit('signin-button-click')" aria-label="Sign in with Microsoft">
+      <button @click="() => APIService.login()" aria-label="Sign in with Microsoft">
         <img src="@/assets/ms-signin-button.svg" aria-hidden="true">
       </button>
     </div>
   </div>
 </template>
+
+<script>
+	import { store } from '@/store'
+
+	export default {
+		computed: {
+      APIService: () => store.APIService
+		}
+	}
+</script>
 
 <style lang="scss" scoped>
   .signin {
@@ -17,6 +27,7 @@
     justify-content: center;
     text-align: center;
     user-select: none;
+		padding: 1.5rem;
 
     h1 {
       margin-bottom: 1.5rem;

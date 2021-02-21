@@ -1,49 +1,132 @@
-import { UserAgentApplication } from 'msal'
+import { v4 as uuidv4 } from 'uuid'
+import storage, { STORAGE_KEYS } from '@/services/storage'
+import router from '@/router'
+import { store } from '@/store'
+import firebase from '@/services/firebase'
 
 
 export default class Graph {
   constructor() {
-    this.graphUrl = 'https://graph.microsoft.com/v1.0'
-    this.userRequest = { scopes: [ 'user.read', 'Calendars.ReadWrite', 'Calendars.ReadWrite.Shared' ] }
-
-    this.app = new UserAgentApplication({
-      auth: { clientId: process.env.VUE_APP_GRAPH_CLIENT_ID },
-      cache: {
-        cacheLocation: 'localStorage',
-        storeAuthStateInCookie: false
-      }
-    })
+    this._graphUrl = 'https://graph.microsoft.com/v1.0'
+    this._oAuthUrl = 'https://login.microsoftonline.com/common/oauth2/v2.0'
   }
 
  
   // --- Auth Stuff ---
 
-  isAuthenticated() {
-    return !!this.app.getAccount()
-  }
-
+  /**
+   * Returns an accessToken. Refreshes silently, if it's invalid.
+   */
   async getToken() {
-    if (!this.isAuthenticated()) 
-      return null
+    let tokenData = storage.get(STORAGE_KEYS.auth.tokenProviderData.microsoft)
+    if (!tokenData || !tokenData.refreshToken || !tokenData.accessToken)
+      return router.push({ name: 'AuthView', query: { error: true }})
 
-    try {
-      const { accessToken } = await this.app.acquireTokenSilent(this.userRequest)
-      return accessToken
-    } catch (err) {
-      if (err.name !== 'InteractionRequiredAuthError')
-        throw new Error(err)
+    const expiresAt = tokenData.expiresAt || 0
 
-      const { accessToken } = await this.app.acquireTokenRedirect(this.userRequest)
-      return accessToken
-    }
+    // If it's invailid, do refresh the token.
+    if (+(new Date()) >= expiresAt) 
+      tokenData = await this._doRefreshToken({ refreshToken: tokenData.refreshToken })
+    
+    return tokenData.accessToken
   }
 
-  async login() {
+
+  /**
+   * Force the tokenData in storage to update (e.g. on login)
+   * @param {object} rawApiTokenDataResponse The direct token json response from API 
+   *   (e.g. { "access_token": "...", "refresh_token": "...", "expires_in": 3600 })
+   */
+  updateTokenData( rawApiTokenDataResponse ) {
+    const currDate = +(new Date()) / 1000
+    const expiresAt = (currDate + rawApiTokenDataResponse.expires_in) * 1000
+
+    return storage.setAndGet(STORAGE_KEYS.auth.tokenProviderData.microsoft, { 
+      refreshToken: rawApiTokenDataResponse.refresh_token, 
+      accessToken: rawApiTokenDataResponse.access_token, 
+      expiresAt
+    })
+  }
+
+
+  /**
+   * Get's called as Oauth callback by router
+   */
+  async handleAuthCallback( to, from ) {
     try {
-      return this.app.loginRedirect(this.userRequest)
+      if (to.query?.state !== storage.getAndDelete(STORAGE_KEYS.auth.customIdentifier)) 
+        throw new Error('Error, the to.query.state and the state saved in storage are not equal!')
+      
+      const code = to.query?.code
+      if (!code) 
+        throw new Error('There is no to.query.code present.')
+  
+      // Now we have the code, we can validate it on our firebase-function and return a customToken if valid.
+      const url = process.env.VUE_APP_FIREBASE_FUNCTIONS_URL + '/oauth2MicrosoftCallbackGenerateCustomToken',
+            body = JSON.stringify({ code, redirectUri: 'http://localhost:8080/auth/callback/microsoft' })
+  
+      const res = await fetch(url, { method: 'POST', body, headers: { 'Content-Type': 'application/json' } })
+      const { data, error } = await res.json()
+      if (error)
+        throw new Error(JSON.stringify(error))
+  
+      // Update tokenData in storage
+      store.APIService.updateTokenData(data['providerTokenData'])
+  
+      // Sign in user
+      await firebase.auth().signInWithCustomToken(data.firebaseCustomToken)
+      
     } catch (error) {
       console.error(error)
+      return { name: 'AuthView', query: { error: error.message } }
     }
+  }
+
+
+  _generateAuthCallbackRedirectUri() {
+    
+  }
+
+
+  async _doRefreshToken({ refreshToken }) {
+    try {
+      console.log('call _doRefreshToken()')
+      const url = process.env.VUE_APP_FIREBASE_FUNCTIONS_URL + '/oauth2MicrosoftRefreshAccessToken'
+      const res = await fetch(url, { 
+        method: 'POST', 
+        body: JSON.stringify({ refreshToken }), 
+        headers: { 'Content-Type': 'application/json' } 
+      })
+      const { data, error } = await res.json()
+      if (error)
+        throw new Error(JSON.stringify(error))
+
+      // Update in storage & return 
+      return this.updateTokenData(data['providerTokenData'])
+
+    } catch (error) {
+      console.error(error)
+      return null
+    }
+  }
+
+
+  login() {
+    // Generate random identifier we need later in the callback to identify the call.
+    const customIdentifier = uuidv4()
+    storage.set(STORAGE_KEYS.auth.customIdentifier, customIdentifier)
+
+    // Build URL/Params
+    const params = new URLSearchParams({
+      client_id: process.env.VUE_APP_GRAPH_CLIENT_ID,
+      response_type: 'code',
+      redirect_uri: 'http://localhost:8080/auth/callback/microsoft',
+      scope: 'profile email calendars.read calendars.read.shared user.read openid offline_access',
+      state: customIdentifier
+    })
+
+    // Finally redirect to auth provider
+    location.replace(this._oAuthUrl + '/authorize?' + params.toString())
   }
 
 
@@ -52,7 +135,7 @@ export default class Graph {
   async _httpRequest( path, options = {} ) {
     const accessToken = await this.getToken(),
           headers = new Headers({ Authorization: `Bearer ${accessToken}` }),
-          url = this.graphUrl + path
+          url = this._graphUrl + path
 
     const res = await fetch(url, { headers, ...options })
     if (!res.ok) {

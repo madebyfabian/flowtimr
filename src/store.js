@@ -4,11 +4,18 @@ import APIService from '@/services/APIService'
 
 export const store = reactive({
   APIService: new APIService(),
+  user: null,
   events: null
 })
 
 
 export const mutations = {
+  updateUser( newVal ) {
+    console.log('> updateUser in store from', store.user, 'to', newVal)
+    store.user = newVal
+  },
+
+
   /**
    * Fetches all calendar events, adds custom formatted data and adds it to global store.
    */
