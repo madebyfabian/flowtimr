@@ -11,7 +11,6 @@ export const store = reactive({
 
 export const mutations = {
   updateUser( newVal ) {
-    console.log('> updateUser in store from', store.user, 'to', newVal)
     store.user = newVal
   },
 
