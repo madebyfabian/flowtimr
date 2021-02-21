@@ -183,6 +183,8 @@
     },
 
     async mounted() {
+      store.APIService._generateAuthCallbackRedirectUri()
+
       // Fetch all events
       this.fetchAndUpdateEvents()
 

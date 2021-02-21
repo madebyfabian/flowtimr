@@ -63,7 +63,7 @@ export default class Graph {
   
       // Now we have the code, we can validate it on our firebase-function and return a customToken if valid.
       const url = process.env.VUE_APP_FIREBASE_FUNCTIONS_URL + '/oauth2MicrosoftCallbackGenerateCustomToken',
-            body = JSON.stringify({ code, redirectUri: 'http://localhost:8080/auth/callback/microsoft' })
+            body = JSON.stringify({ code, redirectUri: this._generateAuthCallbackRedirectUri() })
   
       const res = await fetch(url, { method: 'POST', body, headers: { 'Content-Type': 'application/json' } })
       const { data, error } = await res.json()
@@ -84,7 +84,8 @@ export default class Graph {
 
 
   _generateAuthCallbackRedirectUri() {
-    
+    const pathData = router.resolve({ name: 'AuthCallback', params: { provider: 'microsoft' } })
+    return process.env.VUE_APP_OAUTH_CALLBACK_BASE_URL + pathData.fullPath
   }
 
 
@@ -120,7 +121,7 @@ export default class Graph {
     const params = new URLSearchParams({
       client_id: process.env.VUE_APP_GRAPH_CLIENT_ID,
       response_type: 'code',
-      redirect_uri: 'http://localhost:8080/auth/callback/microsoft',
+      redirect_uri: this._generateAuthCallbackRedirectUri(),
       scope: 'profile email calendars.read calendars.read.shared user.read openid offline_access',
       state: customIdentifier
     })

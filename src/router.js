@@ -18,6 +18,7 @@ const routes = [
 		children: [
 			{
 				path: 'callback/:provider',
+				name: 'AuthCallback',
 				beforeEnter: store.APIService.handleAuthCallback
 			}
 		]
