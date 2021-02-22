@@ -5,13 +5,17 @@ import { store } from '@/store'
 import firebase from '@/services/firebase'
 
 
-export default class Graph {
-  constructor() {
-    this._graphUrl = 'https://graph.microsoft.com/v1.0'
-    this._oAuthUrl = 'https://login.microsoftonline.com/common/oauth2/v2.0'
-  }
+const _graphUrl = 'https://graph.microsoft.com/v1.0',
+      _oAuthUrl = 'https://login.microsoftonline.com/common/oauth2/v2.0'
 
- 
+const _getOAuthCallbackUrl = () => {
+  const routeData = router.resolve({ name: 'AuthCallback', params: { provider: 'microsoft' } })
+  return location.origin + routeData.href
+}
+
+
+export default class Graph {
+
   // --- Auth Stuff ---
 
   /**
@@ -63,7 +67,7 @@ export default class Graph {
   
       // Now we have the code, we can validate it on our firebase-function and return a customToken if valid.
       const url = process.env.VUE_APP_NETLIFY_FUNCTIONS_BASE_URL + '/oauth2MicrosoftCbGenCustomToken',
-            body = JSON.stringify({ code, redirectUri: this._oAuthCallbackUrl })
+            body = JSON.stringify({ code, redirectUri: _getOAuthCallbackUrl() })
   
       const res = await fetch(url, { method: 'POST', body, headers: { 'Content-Type': 'application/json' } })
       const { data, error } = await res.json()
@@ -80,12 +84,6 @@ export default class Graph {
       console.error(error)
       return { name: 'AuthView', query: { error: error.message } }
     }
-  }
-
-
-  get _oAuthCallbackUrl() {
-    console.log({router})
-    return location.origin + router.resolve({ name: 'AuthCallback', params: { provider: 'microsoft' } })
   }
 
 
@@ -121,13 +119,13 @@ export default class Graph {
     const params = new URLSearchParams({
       client_id: process.env.VUE_APP_GRAPH_CLIENT_ID,
       response_type: 'code',
-      redirect_uri: this._oAuthCallbackUrl,
+      redirect_uri: _getOAuthCallbackUrl(),
       scope: 'profile email calendars.read calendars.read.shared user.read openid offline_access',
       state: customIdentifier
     })
 
     // Finally redirect to auth provider
-    location.replace(this._oAuthUrl + '/authorize?' + params.toString())
+    location.replace(_oAuthUrl + '/authorize?' + params.toString())
   }
 
 
@@ -136,7 +134,7 @@ export default class Graph {
   async _httpRequest( path, options = {} ) {
     const accessToken = await this.getToken(),
           headers = new Headers({ Authorization: `Bearer ${accessToken}` }),
-          url = this._graphUrl + path
+          url = _graphUrl + path
 
     const res = await fetch(url, { headers, ...options })
     if (!res.ok) {
