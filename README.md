@@ -8,9 +8,6 @@ While developing, you need a `.env.local`-file in the root directory of this pro
 # Microsoft Graph API
 VUE_APP_GRAPH_CLIENT_ID=xxx
 
-# OAuth Callback (e.g. http://localhost:8080 for dev)
-VUE_APP_OAUTH_CALLBACK_BASE_URL=xxx
-
 # Firebase
 VUE_APP_FIREBASE_API_KEY=xxx
 VUE_APP_FIREBASE_AUTH_DOMAIN=xxx.firebaseapp.com
