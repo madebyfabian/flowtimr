@@ -24,7 +24,7 @@ export default class Graph {
   async getToken() {
     let tokenData = storage.get(STORAGE_KEYS.auth.tokenProviderData.microsoft)
     if (!tokenData || !tokenData.refreshToken || !tokenData.accessToken)
-      return router.push({ name: 'AuthView', query: { error: true }})
+      return router.push({ name: 'AuthView' })
 
     const expiresAt = tokenData.expiresAt || 0
 

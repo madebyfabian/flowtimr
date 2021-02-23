@@ -2,7 +2,7 @@
   <div class="signin">
     <div>
       <h1>flowtimr</h1>
-      <button @click="startAuth" aria-label="Sign in with Microsoft">
+      <button @click="() => APIService.login()" aria-label="Sign in with Microsoft">
         <img src="@/assets/ms-signin-button.svg" aria-hidden="true">
       </button>
     </div>
@@ -11,30 +11,11 @@
 
 <script>
 	import { store } from '@/store'
-  import firebase from '@/services/firebase'
 
 	export default {
 		computed: {
       APIService: () => store.APIService
-		},
-
-    methods: {
-      async startAuth() {
-        console.log('Starting auth...')
-
-        const provider = new firebase.auth.OAuthProvider('microsoft.com')
-        provider.setCustomParameters({ prompt: 'consent',  })
-        provider.addScope('calendars.read')
-        provider.addScope('offline_access')
-
-        try {
-          const res = await firebase.auth().signInWithRedirect(provider)
-          console.log({ res })
-        } catch (error) {
-          console.error(error)
-        }
-      }
-    }
+		}
 	}
 </script>
 
