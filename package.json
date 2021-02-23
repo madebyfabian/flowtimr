@@ -5,7 +5,7 @@
   "scripts": {
     "start": "vue-cli-service serve",
     "build": "vue-cli-service build && http-server dist -p 9000",
-    "github-actions-build": "npx vue-cli-service build"
+    "github-actions-build": "npx @vue/cli build"
   },
   "dependencies": {
     "@vue/compiler-sfc": "^3.0.2",
