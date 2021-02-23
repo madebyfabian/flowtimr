@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve",
-    "build": "vue-cli-service build && http-server dist -p 9000",
-    "netlify-build": "vue-cli-service build"
+    "build-serve": "vue-cli-service build && http-server dist -p 9000",
+    "build": "vue-cli-service build"
   },
   "dependencies": {
     "@vue/compiler-sfc": "^3.0.2",
