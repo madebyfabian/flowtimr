@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve",
-    "build": "vue-cli-service build && http-server dist -p 9000",
-    "github-actions-build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "build-and-preview": "vue-cli-service build && http-server dist -p 9000"
   },
   "dependencies": {
     "@vue/compiler-sfc": "^3.0.2",
