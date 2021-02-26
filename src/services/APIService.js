@@ -110,6 +110,10 @@ export default class Graph {
   }
 
 
+  /**
+   * Redirect user to Microsoft OAuth.
+   * @see https://docs.microsoft.com/de-de/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
+   */
   login() {
     // Generate random identifier we need later in the callback to identify the call.
     const customIdentifier = uuidv4()
@@ -121,7 +125,8 @@ export default class Graph {
       response_type: 'code',
       redirect_uri: _getOAuthCallbackUrl(),
       scope: 'profile email calendars.read calendars.read.shared user.read openid offline_access',
-      state: customIdentifier
+      state: customIdentifier,
+      prompt: 'select_account'
     })
 
     // Finally redirect to auth provider
