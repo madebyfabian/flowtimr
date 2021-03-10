@@ -1,3 +1,5 @@
+![Cover Art](cover.png?raw=true "Cover Art")
+
 # flowtimr
 A simple Microsoft 365-Compatible Calendar overview that displays your current + next meetings in a clean way.
 
