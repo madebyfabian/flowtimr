@@ -2,7 +2,7 @@
 	<div class="home">
 		<div v-if="events !== null">
 			<section class="main" :class="{ listOpened }">
-				<div class="hero" :class="{ hasEvent: currActiveEventData }">
+				<div class="container hero" :class="{ hasEvent: currActiveEventData }">
 					<div v-if="currActiveEventData">
 						<Badge :type="`active`">Jetzt</Badge>
 						<EventTitle :size="1" :event="currActiveEventData" />
@@ -16,7 +16,7 @@
 					<h1 v-else>Alles erledigt<br>für heute.<br><br><span style="opacity: .5">🎉</span></h1>
 				</div>
 
-				<div class="eventNextUp-wrapper" v-if="allUpcomingEvents.length !== 0">
+				<div class="container eventNextUp-wrapper" v-if="allUpcomingEvents.length !== 0">
 					<EventNextUp v-if="nextEventData" :event="nextEventData" />
 
 					<button @click="openList">
@@ -25,7 +25,7 @@
 				</div>
 			</section>
 
-			<section v-if="allUpcomingEvents.length !== 0" class="list">
+			<section v-if="allUpcomingEvents.length !== 0" class="container list">
 				<h1>Was steht <br>noch an?</h1>
 				<EventSingleCard 
 					v-for="event of allUpcomingEvents" 
@@ -213,7 +213,6 @@
     height: 100vh;
     display: grid;
     grid-template-rows: 1fr min-content;
-    padding: 0 1.5rem;
     position: fixed;
     top: 0;
     left: 0;
@@ -233,7 +232,6 @@
       display: flex;
       align-items: center;
       user-select: none;
-      margin-right: 1rem;
 
       .EventInfoBar {
         color: var(--color-content-secondary);
@@ -272,7 +270,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto;
         background: transparent;
         outline: none;
         border-style: none;
