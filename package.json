@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "netlify dev",
-    "build": "npm i && ./node_modules/netlify-cli/bin/run build",
+    "build": "npm i && vue-cli-service build && netlify-lambda build netlify/functions/",
     "build-and-preview": "npm run build && http-server dist -p 9000"
   },
   "dependencies": {
@@ -31,7 +31,6 @@
     "@vue/cli-plugin-pwa": "^4.5.0",
     "@vue/cli-plugin-router": "^4.5.0",
     "@vue/cli-service": "^4.5.0",
-    "netlify-cli": "^8.14.1",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "vue-template-compiler": "^2.6.11"
