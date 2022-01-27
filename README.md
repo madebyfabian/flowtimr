@@ -4,6 +4,9 @@
 A simple Microsoft 365-Compatible Calendar overview that displays your current + next meetings in a clean way.
 
 # Development
+
+## Configuration
+Install netlify cli `npm install netlify-cli -g` and run `netlify link` to link it to your site.
 While developing, you need a `.env.local`-file in the root directory of this project. It must contain
 
 ```
@@ -18,6 +21,13 @@ VUE_APP_FIREBASE_APP_ID=xxx
 
 # Netlify Functions
 VUE_APP_NETLIFY_FUNCTIONS_BASE_URL=https://xxx.netlify.app/.netlify/functions/
+
+# Microsoft OAuth
+MS_OAUTH2_CLIENT_ID=xxx
+MS_OAUTH2_CLIENT_SECRET=xxx
+
+# Firebase Admin
+FIREBASE_CONFIG={xxx: xxx}
 ```
 
 - To get the Microsoft Graph Client ID, visit https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/RegisteredApps
