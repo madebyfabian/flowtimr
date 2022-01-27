@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "netlify dev",
-    "build": "npm i && netlify-cli build",
+    "build": "npm i && netlify build",
     "build-and-preview": "npm run build && http-server dist -p 9000"
   },
   "dependencies": {
